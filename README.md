@@ -250,6 +250,35 @@ RSpec.describe "Messages", type: :system do
 end
 ```
 
+## Minitest support
+
+`TurboRspec::Assertions` is an opt-in companion module with no RSpec dependency. Include it in any Minitest test class:
+
+```ruby
+class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
+  include TurboRspec::Assertions
+end
+```
+
+### Available assertions
+
+```ruby
+# Stream assertions
+assert_turbo_stream(response, action: :append, target: "messages")
+assert_turbo_stream(response, action: :append, target: "messages", content: "Hello")
+assert_turbo_stream(response, targets: ".items")
+assert_turbo_stream(response, partial: "messages/_message")
+refute_turbo_stream(response, action: :replace)
+
+# Frame assertions
+assert_turbo_frame(response, id: "messages")
+assert_turbo_frame(response, id: "messages", content: "Hello")
+refute_turbo_frame(response, id: "notifications")
+
+# Custom failure message
+assert_turbo_stream(response, action: :append, message: "expected append stream")
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on [GitHub](https://github.com/eclectic-coding/turbo_rspec).
