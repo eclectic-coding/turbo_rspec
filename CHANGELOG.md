@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.6.0] - 2026-05-28
+
 ### Added
 
 - `TurboRspec::Helpers` module with `turbo_stream_html` and `turbo_frame_html` factory helpers for building test HTML inline
