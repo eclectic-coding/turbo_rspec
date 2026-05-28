@@ -1,0 +1,13 @@
+TurboRspec installed!
+
+A configuration file has been created at spec/support/turbo_rspec.rb.
+
+Make sure it is required in your spec/rails_helper.rb:
+
+  Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+
+Matchers are automatically included in request, controller, system,
+and feature specs when turbo-rails is present.
+
+See the docs for usage examples:
+  https://github.com/eclectic-coding/turbo_rspec
