@@ -52,8 +52,11 @@ RSpec.describe TurboRspec do
         allow(Gem.loaded_specs).to receive(:key?).with("capybara").and_return(false)
       end
 
-      it "includes Matchers into request example groups" do
+      it "includes Matchers and Helpers into request and controller example groups" do
         expect(rspec_config).to receive(:include).with(TurboRspec::Matchers, type: :request)
+        expect(rspec_config).to receive(:include).with(TurboRspec::Matchers, type: :controller)
+        expect(rspec_config).to receive(:include).with(TurboRspec::Helpers, type: :request)
+        expect(rspec_config).to receive(:include).with(TurboRspec::Helpers, type: :controller)
         described_class.install_rspec_integration(rspec_config)
       end
     end
@@ -66,6 +69,9 @@ RSpec.describe TurboRspec do
 
       it "includes Capybara::Matchers into system and feature example groups" do
         allow(rspec_config).to receive(:include).with(TurboRspec::Matchers, type: :request)
+        allow(rspec_config).to receive(:include).with(TurboRspec::Matchers, type: :controller)
+        allow(rspec_config).to receive(:include).with(TurboRspec::Helpers, type: :request)
+        allow(rspec_config).to receive(:include).with(TurboRspec::Helpers, type: :controller)
         expect(rspec_config).to receive(:include).with(TurboRspec::Capybara::Matchers, type: :system)
         expect(rspec_config).to receive(:include).with(TurboRspec::Capybara::Matchers, type: :feature)
         described_class.install_rspec_integration(rspec_config)

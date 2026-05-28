@@ -3,7 +3,9 @@
 require_relative "turbo_rspec/version"
 require_relative "turbo_rspec/configuration"
 require_relative "turbo_rspec/matchers"
+require_relative "turbo_rspec/helpers"
 require_relative "turbo_rspec/assertions"
+require_relative "turbo_rspec/shared_examples"
 require_relative "turbo_rspec/capybara/matchers"
 
 module TurboRspec
@@ -25,6 +27,9 @@ module TurboRspec
     def install_rspec_integration(config)
       return unless configuration.auto_include && Gem.loaded_specs.key?("turbo-rails")
       config.include Matchers, type: :request
+      config.include Matchers, type: :controller
+      config.include Helpers, type: :request
+      config.include Helpers, type: :controller
       if Gem.loaded_specs.key?("capybara")
         config.include Capybara::Matchers, type: :system
         config.include Capybara::Matchers, type: :feature
