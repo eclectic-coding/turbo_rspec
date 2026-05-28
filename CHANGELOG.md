@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.5.0] - 2026-05-28
+
 ### Added
 
 - `TurboRspec::Assertions` — opt-in minitest companion module with `assert_turbo_stream`, `refute_turbo_stream`, `assert_turbo_frame`, `refute_turbo_frame`; no RSpec dependency required
