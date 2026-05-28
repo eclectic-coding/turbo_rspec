@@ -1,5 +1,11 @@
 # TurboRspec
 
+[![CI](https://github.com/eclectic-coding/turbo_rspec/actions/workflows/ci.yml/badge.svg)](https://github.com/eclectic-coding/turbo_rspec/actions/workflows/ci.yml)
+[![Gem Version](https://img.shields.io/gem/v/turbo_rspec)](https://rubygems.org/gems/turbo_rspec)
+[![Gem Downloads](https://img.shields.io/gem/dt/turbo_rspec)](https://rubygems.org/gems/turbo_rspec)
+[![Ruby](https://img.shields.io/badge/ruby-%3E%3D%203.3-ruby)](https://rubygems.org/gems/turbo_rspec)
+[![codecov](https://codecov.io/gh/eclectic-coding/turbo_rspec/branch/main/graph/badge.svg)](https://codecov.io/gh/eclectic-coding/turbo_rspec)
+
 RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails) — assert Turbo Stream responses, Turbo Frame content, and ActionCable broadcasts without hand-rolling helpers in every project.
 
 ## Installation
