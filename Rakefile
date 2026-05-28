@@ -7,4 +7,7 @@ RSpec::Core::RakeTask.new(:spec)
 
 require "standard/rake"
 
-task default: %i[spec standard]
+require "bundler/audit/task"
+Bundler::Audit::Task.new
+
+task default: %i[spec standard bundle:audit:update bundle:audit]
