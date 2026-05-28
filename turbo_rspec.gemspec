@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "Drop-in RSpec matchers for hotwired/turbo-rails: assert Turbo Stream responses, Turbo Frame content, and ActionCable broadcasts without hand-rolling helpers in every project."
   spec.homepage = "https://github.com/eclectic-coding/turbo_rspec"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.2.0"
+  spec.required_ruby_version = ">= 3.3.0"
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/eclectic-coding/turbo_rspec"
