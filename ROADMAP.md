@@ -8,18 +8,12 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 **Goal:** a minimal but useful gem that earns a place in people's `Gemfile`. Cover the most common request-spec case: asserting on a Turbo Stream response.
 
-### Setup
-
-- Auto-include matchers into `RSpec::Rails::RequestExampleGroup` when `turbo-rails` is present
-- `TurboRspec.configure` block for opt-in configuration (e.g. disable auto-include)
-- Explicit `include TurboRspec::Matchers` for non-Rails or custom contexts
-
 ### Gem hygiene
 
 - Fill out `turbo_rspec.gemspec` (summary, description, homepage, source_code_uri, changelog_uri)
 - Declare runtime dependency on `nokogiri` (HTML parsing) and `turbo-rails`
 - Enable `rubygems_mfa_required`
-- Set up GitHub Actions CI (Ruby 3.2/3.3/3.4 × Rails 7.2/8.0)
+- Set up GitHub Actions CI (Ruby 3.3/3.4/4.0 × Rails 7.2/8.0)
 - Set up RubyGems Trusted Publishing (OIDC, no stored API key)
 - Replace placeholder README with real usage docs and examples
 - Replace placeholder CHANGELOG entry with real notes
