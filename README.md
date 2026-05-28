@@ -1,39 +1,145 @@
 # TurboRspec
 
-TODO: Delete this and the text below, and describe your gem
+[![CI](https://github.com/eclectic-coding/turbo_rspec/actions/workflows/ci.yml/badge.svg)](https://github.com/eclectic-coding/turbo_rspec/actions/workflows/ci.yml)
+[![Gem Version](https://img.shields.io/gem/v/turbo_rspec)](https://rubygems.org/gems/turbo_rspec)
+[![Gem Downloads](https://img.shields.io/gem/dt/turbo_rspec)](https://rubygems.org/gems/turbo_rspec)
+[![Ruby](https://img.shields.io/badge/ruby-%3E%3D%203.3-ruby)](https://rubygems.org/gems/turbo_rspec)
+[![codecov](https://codecov.io/gh/eclectic-coding/turbo_rspec/branch/main/graph/badge.svg)](https://codecov.io/gh/eclectic-coding/turbo_rspec)
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/turbo_rspec`. To experiment with that code, run `bin/console` for an interactive prompt.
+RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails) — assert Turbo Stream responses, Turbo Frame content, and ActionCable broadcasts without hand-rolling helpers in every project.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+Add to your application's `Gemfile`:
 
-Install the gem and add to the application's Gemfile by executing:
-
-```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+```ruby
+group :test do
+  gem "turbo_rspec"
+end
 ```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+## Setup
 
-```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+### Rails + turbo-rails (automatic)
+
+No setup needed. When `turbo-rails` is in your bundle, `TurboRspec::Matchers` is automatically included in all `type: :request` example groups.
+
+### Manual include
+
+For non-Rails projects or custom contexts, include the matchers explicitly:
+
+```ruby
+# spec/spec_helper.rb
+RSpec.configure do |config|
+  config.include TurboRspec::Matchers
+end
 ```
 
-## Usage
+### Configuration
 
-TODO: Write usage instructions here
+```ruby
+# spec/support/turbo_rspec.rb
+TurboRspec.configure do |config|
+  config.auto_include = false  # disable automatic inclusion into request specs
+end
+```
 
-## Development
+## Matchers
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+### `have_turbo_stream`
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+Assert that a response body contains a `<turbo-stream>` element.
+
+```ruby
+# Basic — any turbo stream present
+expect(response).to have_turbo_stream
+
+# With action
+expect(response).to have_turbo_stream.with_action(:append)
+expect(response).to have_turbo_stream.with_action(:replace)
+expect(response).to have_turbo_stream.with_action(:remove)
+
+# With target (single DOM id)
+expect(response).to have_turbo_stream.targeting("messages")
+
+# With targets (CSS selector)
+expect(response).to have_turbo_stream.targeting_all(".message-item")
+
+# With content
+expect(response).to have_turbo_stream.with_content("Hello, world!")
+
+# With partial
+expect(response).to have_turbo_stream.rendering("messages/_message")
+
+# Chained — all constraints must match the same stream
+expect(response).to have_turbo_stream
+  .with_action(:append)
+  .targeting("messages")
+  .with_content("Hello")
+
+# Negation
+expect(response).not_to have_turbo_stream.with_action(:replace)
+```
+
+#### Actions
+
+Turbo supports the following stream actions: `append`, `prepend`, `replace`, `update`, `remove`, `before`, `after`, `refresh`.
+
+### `have_turbo_frame`
+
+Assert that a response body contains a `<turbo-frame>` element.
+
+```ruby
+# Basic — any turbo frame present
+expect(response).to have_turbo_frame
+
+# With id
+expect(response).to have_turbo_frame.with_id("messages")
+
+# With content
+expect(response).to have_turbo_frame.with_id("messages").with_content("Hello")
+
+# With partial
+expect(response).to have_turbo_frame.with_id("post").rendering("posts/_post")
+
+# Negation
+expect(response).not_to have_turbo_frame.with_id("notifications")
+```
+
+## Example: request spec
+
+```ruby
+RSpec.describe "Messages", type: :request do
+  describe "POST /messages" do
+    it "appends the new message to the list" do
+      post messages_path, params: { message: { body: "Hello" } },
+                          headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+      expect(response).to have_turbo_stream
+        .with_action(:append)
+        .targeting("messages")
+        .with_content("Hello")
+    end
+  end
+
+  describe "DELETE /messages/:id" do
+    it "removes the message row" do
+      message = create(:message)
+      delete message_path(message),
+             headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+      expect(response).to have_turbo_stream
+        .with_action(:remove)
+        .targeting("message_#{message.id}")
+    end
+  end
+end
+```
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/turbo_rspec.
+Bug reports and pull requests are welcome on [GitHub](https://github.com/eclectic-coding/turbo_rspec).
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The gem is available as open source under the [MIT License](https://opensource.org/licenses/MIT).

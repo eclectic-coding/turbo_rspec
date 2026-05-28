@@ -2,6 +2,7 @@
 
 ### Added
 
+- Real usage README covering both matchers, setup, and configuration
 - `TurboRspec.configure` block for opt-in configuration
 - Auto-include `TurboRspec::Matchers` into `RSpec::Rails` request example groups when `turbo-rails` is present; disable with `TurboRspec.configure { |c| c.auto_include = false }`
 - Explicit `include TurboRspec::Matchers` supported in any non-Rails or custom context
