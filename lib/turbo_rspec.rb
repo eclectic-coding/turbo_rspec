@@ -3,6 +3,7 @@
 require_relative "turbo_rspec/version"
 require_relative "turbo_rspec/configuration"
 require_relative "turbo_rspec/matchers"
+require_relative "turbo_rspec/capybara/matchers"
 
 module TurboRspec
   class Error < StandardError; end
@@ -23,6 +24,10 @@ module TurboRspec
     def install_rspec_integration(config)
       return unless configuration.auto_include && Gem.loaded_specs.key?("turbo-rails")
       config.include Matchers, type: :request
+      if Gem.loaded_specs.key?("capybara")
+        config.include Capybara::Matchers, type: :system
+        config.include Capybara::Matchers, type: :feature
+      end
     end
   end
 end
