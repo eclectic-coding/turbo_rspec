@@ -201,6 +201,38 @@ expect(page).to have_turbo_stream_tag("signed_stream_name")
 expect(page).not_to have_turbo_stream_tag
 ```
 
+## Test helpers
+
+`TurboRspec::Helpers` provides factory methods for building Turbo HTML inline in tests. Auto-included in `type: :request` and `type: :controller` example groups.
+
+```ruby
+# Build a <turbo-stream> element
+turbo_stream_html(action: :append, target: "messages", content: "Hello")
+turbo_stream_html(action: :remove, targets: ".item")
+
+# Build a <turbo-frame> element
+turbo_frame_html(id: "messages", content: "Hello")
+```
+
+## Shared examples
+
+```ruby
+RSpec.describe "Messages", type: :request do
+  describe "POST /messages" do
+    before { post messages_path, params: { body: "Hello" }, as: :turbo_stream }
+
+    # Assert any turbo stream is present
+    it_behaves_like "a turbo stream response"
+
+    # Assert a specific stream
+    it_behaves_like "a turbo stream response", action: :append, target: "messages", content: "Hello"
+
+    # Assert a turbo frame
+    it_behaves_like "a turbo frame response", id: "messages"
+  end
+end
+```
+
 ## Example: request spec
 
 ```ruby

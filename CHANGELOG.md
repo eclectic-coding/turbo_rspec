@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+### Added
+
+- `TurboRspec::Helpers` module with `turbo_stream_html` and `turbo_frame_html` factory helpers for building test HTML inline
+- Shared examples: `it_behaves_like "a turbo stream response"` and `it_behaves_like "a turbo frame response"` for common assertions
+- `have_turbo_stream`, `have_turbo_frame`, and `TurboRspec::Helpers` auto-included into `type: :controller` example groups alongside `type: :request`
+
 ## [0.5.0] - 2026-05-28
 
 ### Added
