@@ -22,6 +22,14 @@ end
 
 ## Setup
 
+### Generator
+
+Run the install generator to scaffold a `spec/support/turbo_rspec.rb` configuration file:
+
+```bash
+rails generate turbo_rspec:install
+```
+
 ### Rails + turbo-rails (automatic)
 
 No setup needed. When `turbo-rails` is in your bundle:
