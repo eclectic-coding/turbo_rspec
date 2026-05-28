@@ -5,6 +5,7 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in turbo_rspec.gemspec
 gemspec
 
+gem "benchmark"
 gem "irb"
 gem "rake", "~> 13.0"
 
