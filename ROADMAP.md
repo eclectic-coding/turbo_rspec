@@ -4,17 +4,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 ---
 
-## v0.6.0 — Testing utilities
-
-**Goal:** reduce boilerplate in real test suites and close the controller spec gap.
-
-- `turbo_stream_html(action:, target:, content: nil)` — factory helper for building `<turbo-stream>` HTML inline in tests
-- Shared examples: `it_behaves_like "a turbo stream response"` and `"a turbo frame response"` for common assertions
-- Controller spec support — `have_turbo_stream` and `have_turbo_frame` working against `response` in `type: :controller`
-- Auto-include `TurboRspec::Matchers` into `type: :controller` when `turbo-rails` is present
-
----
-
 ## v0.7.0 — Documentation
 
 **Goal:** full docs before freezing the API.
