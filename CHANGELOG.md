@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-28
+
 ### Added
 
 - `have_broadcasted_turbo_stream_to(stream)` block matcher for asserting ActionCable broadcasts contain a `<turbo-stream>` element
