@@ -15,6 +15,7 @@ gem "capybara"
 
 gem "rspec", "~> 3.0"
 gem "simplecov", require: false
+gem "simplecov-json", require: false
 
 gem "standard", "~> 1.3"
 gem "yard", "~> 0.9", require: false

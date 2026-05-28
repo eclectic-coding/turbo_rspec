@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 require "simplecov"
-require "simplecov_json_formatter"
+require "simplecov-json"
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
+  SimpleCov::Formatter::HTMLFormatter,
+  SimpleCov::Formatter::JSONFormatter
+])
 SimpleCov.start do
   add_filter "/spec/"
   enable_coverage :branch
   minimum_coverage line: 100, branch: 100
-  formatter SimpleCov::Formatter::MultiFormatter.new([
-    SimpleCov::Formatter::HTMLFormatter,
-    SimpleCov::Formatter::JSONFormatter
-  ])
 end
 
 require "turbo_rspec"
