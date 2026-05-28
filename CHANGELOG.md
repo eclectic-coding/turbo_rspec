@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.0.0] - 2026-05-28
+
 ### Added
 
 - `rails generate turbo_rspec:install` — scaffolds `spec/support/turbo_rspec.rb` with sensible defaults
