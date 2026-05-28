@@ -41,6 +41,11 @@ RSpec.describe TurboRspec::Matchers::HaveTurboStream do
       expect(stream(content: "Hello")).not_to have_turbo_stream.with_content("Goodbye")
     end
 
+    it "matches on rendering" do
+      body = '<turbo-stream action="append" target="list"><template><!-- _item.html.erb --></template></turbo-stream>'
+      expect(body).to have_turbo_stream.rendering("_item.html.erb")
+    end
+
     it "matches on targeting_all" do
       body = '<turbo-stream action="remove" targets=".item"><template></template></turbo-stream>'
       expect(body).to have_turbo_stream.targeting_all(".item")
@@ -56,6 +61,11 @@ RSpec.describe TurboRspec::Matchers::HaveTurboStream do
       body = stream(action: "append", target: "list") + stream(action: "replace", target: "header")
       expect(body).to have_turbo_stream.with_action(:replace).targeting("header")
     end
+
+    it "accepts a response object with a body method" do
+      response = double(body: stream(action: "append", target: "list"))
+      expect(response).to have_turbo_stream.with_action(:append).targeting("list")
+    end
   end
 
   describe "failure messages" do
@@ -70,6 +80,30 @@ RSpec.describe TurboRspec::Matchers::HaveTurboStream do
 
     it "provides negated failure message" do
       expect(matcher.failure_message_when_negated).to include("not to contain")
+    end
+
+    it "lists found streams when constraints do not match" do
+      matcher.matches?(stream(action: "append", target: "list"))
+      expect(matcher.failure_message).to include("found turbo streams")
+      expect(matcher.failure_message).to include("<turbo-stream action=")
+    end
+
+    it "includes targeting_all in constraint description" do
+      m = have_turbo_stream.targeting_all(".items")
+      m.matches?("<div></div>")
+      expect(m.failure_message).to include('targeting all ".items"')
+    end
+
+    it "includes with_content in constraint description" do
+      m = have_turbo_stream.with_content("Hello")
+      m.matches?("<div></div>")
+      expect(m.failure_message).to include('with content "Hello"')
+    end
+
+    it "includes rendering in constraint description" do
+      m = have_turbo_stream.rendering("_item.html.erb")
+      m.matches?("<div></div>")
+      expect(m.failure_message).to include('rendering "_item.html.erb"')
     end
   end
 

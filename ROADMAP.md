@@ -8,12 +8,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 **Goal:** a minimal but useful gem that earns a place in people's `Gemfile`. Cover the most common request-spec case: asserting on a Turbo Stream response.
 
-### Matchers
-
-- `have_turbo_frame` — assert response contains a `<turbo-frame>` element
-  - `.with_id("frame_id")`
-  - `.with_content("text")` / `.rendering("partial")`
-
 ### Setup
 
 - Auto-include matchers into `RSpec::Rails::RequestExampleGroup` when `turbo-rails` is present

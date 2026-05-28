@@ -10,4 +10,4 @@ require "standard/rake"
 require "bundler/audit/task"
 Bundler::Audit::Task.new
 
-task default: %i[spec standard bundle:audit:update bundle:audit]
+task default: %i[bundle:audit:update bundle:audit spec standard]
