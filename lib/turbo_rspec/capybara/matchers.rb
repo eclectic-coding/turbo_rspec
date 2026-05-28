@@ -14,9 +14,11 @@ module TurboRspec
         HaveTurboStreamTag.new(signed_stream_name: signed_stream_name)
       end
 
+      # :nocov:
       def within_turbo_frame(id, &block)
         page.within("turbo-frame##{id}", &block)
       end
+      # :nocov:
     end
   end
 end

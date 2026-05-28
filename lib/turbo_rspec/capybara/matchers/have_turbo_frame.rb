@@ -26,9 +26,6 @@ module TurboRspec
           return false if @loaded && !@node[:complete]
           return false if @content && !@node.has_content?(@content, wait: 0)
           true
-        rescue ::Capybara::ElementNotFound
-          @node = nil
-          false
         end
 
         def does_not_match?(page_or_node)
