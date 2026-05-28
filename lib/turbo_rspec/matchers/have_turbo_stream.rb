@@ -72,8 +72,6 @@ module TurboRspec
 
       def parse_streams(body)
         Nokogiri::HTML5.fragment(body).css("turbo-stream")
-      rescue => _e
-        Nokogiri::HTML.fragment(body).css("turbo-stream")
       end
 
       def stream_matches?(stream)
