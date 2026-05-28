@@ -42,4 +42,35 @@ RSpec.describe TurboRspec do
       expect(described_class.configuration.auto_include).to be true
     end
   end
+
+  describe ".install_rspec_integration" do
+    let(:rspec_config) { double("RSpec::Core::Configuration") }
+
+    context "when auto_include is true and turbo-rails is present" do
+      before { allow(Gem.loaded_specs).to receive(:key?).with("turbo-rails").and_return(true) }
+
+      it "includes Matchers into request example groups" do
+        expect(rspec_config).to receive(:include).with(TurboRspec::Matchers, type: :request)
+        described_class.install_rspec_integration(rspec_config)
+      end
+    end
+
+    context "when auto_include is false" do
+      before { described_class.configure { |c| c.auto_include = false } }
+
+      it "does not include Matchers" do
+        expect(rspec_config).not_to receive(:include)
+        described_class.install_rspec_integration(rspec_config)
+      end
+    end
+
+    context "when turbo-rails is not present" do
+      before { allow(Gem.loaded_specs).to receive(:key?).with("turbo-rails").and_return(false) }
+
+      it "does not include Matchers" do
+        expect(rspec_config).not_to receive(:include)
+        described_class.install_rspec_integration(rspec_config)
+      end
+    end
+  end
 end

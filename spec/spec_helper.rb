@@ -8,6 +8,13 @@ end
 
 require "turbo_rspec"
 
+require "logger"
+require "active_support/core_ext/string/inflections"
+require "active_support/core_ext/object/blank"
+require "action_cable"
+ActionCable.server.config.logger = Logger.new(nil)
+ActionCable.server.config.cable = {"adapter" => "test"}
+
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"

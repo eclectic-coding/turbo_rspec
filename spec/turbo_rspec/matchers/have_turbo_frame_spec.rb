@@ -73,6 +73,18 @@ RSpec.describe TurboRspec::Matchers::HaveTurboFrame do
     it "provides negated failure message" do
       expect(matcher.failure_message_when_negated).to include("not to contain")
     end
+
+    it "includes with_content in failure message" do
+      m = have_turbo_frame.with_content("Hello")
+      m.matches?("<div></div>")
+      expect(m.failure_message).to include('with content "Hello"')
+    end
+
+    it "includes rendering in failure message" do
+      m = have_turbo_frame.rendering("_post.html.erb")
+      m.matches?("<div></div>")
+      expect(m.failure_message).to include('rendering "_post.html.erb"')
+    end
   end
 
   describe "#description" do

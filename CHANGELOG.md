@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+### Added
+
+- `have_broadcasted_turbo_stream_to(stream)` block matcher for asserting ActionCable broadcasts contain a `<turbo-stream>` element
+  - Same fluent chain as `have_turbo_stream`: `.with_action`, `.targeting`, `.targeting_all`, `.with_content`, `.rendering`
+  - Count qualifiers: `.once`, `.twice`, `.exactly(n).times`, `.at_least(n).times`, `.at_most(n).times`
+  - `broadcast_turbo_stream_to` alias for naming symmetry with ActionCable's API
+  - Negation via `not_to have_broadcasted_turbo_stream_to` works out of the box
+
 ## [0.1.0] - 2026-05-28
 
 ### Added

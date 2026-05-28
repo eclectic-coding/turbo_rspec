@@ -8,6 +8,7 @@ gemspec
 gem "irb"
 gem "rake", "~> 13.0"
 
+gem "actioncable"
 gem "bundler-audit", "~> 0.9"
 
 gem "rspec", "~> 3.0"

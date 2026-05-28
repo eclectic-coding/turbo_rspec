@@ -19,12 +19,16 @@ module TurboRspec
     def reset_configuration!
       @configuration = Configuration.new
     end
+
+    def install_rspec_integration(config)
+      return unless configuration.auto_include && Gem.loaded_specs.key?("turbo-rails")
+      config.include Matchers, type: :request
+    end
   end
 end
 
+# :nocov:
 if defined?(RSpec)
-  RSpec.configure do |config|
-    config.include TurboRspec::Matchers, type: :request if TurboRspec.configuration.auto_include &&
-      Gem.loaded_specs.key?("turbo-rails")
-  end
+  RSpec.configure { |config| TurboRspec.install_rspec_integration(config) }
 end
+# :nocov:
