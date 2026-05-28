@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
+require_relative "matchers/have_turbo_frame"
 require_relative "matchers/have_turbo_stream"
 
 module TurboRspec
   module Matchers
+    def have_turbo_frame
+      HaveTurboFrame.new
+    end
+
     def have_turbo_stream
       HaveTurboStream.new
     end
