@@ -5,19 +5,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 ---
 
 
-
----
-
-## v0.4.0 — Developer experience pass
-
-**Goal:** make failure output good enough that you never have to drop into a debugger just to read a matcher failure.
-
-- Rich failure messages: show actual stream actions/targets found vs. expected
-- `assert_no_turbo_stream` alias for teams that mix RSpec/minitest terminology
-- Composable matchers: `include(have_turbo_stream(...), have_turbo_stream(...))` for multi-stream assertions
-- `have_turbo_streams` (plural) — assert multiple streams in one expectation with an array DSL
-- Support for `aggregate_failures` blocks
-
 ---
 
 ## v0.5.0 — Compatibility and edge cases

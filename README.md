@@ -89,6 +89,27 @@ expect(response).not_to have_turbo_stream.with_action(:replace)
 
 Turbo supports the following stream actions: `append`, `prepend`, `replace`, `update`, `remove`, `before`, `after`, `refresh`.
 
+### `have_turbo_streams`
+
+Assert that a response contains **all** of the specified streams in one expectation.
+
+```ruby
+expect(response).to have_turbo_streams(
+  have_turbo_stream.with_action(:append).targeting("messages"),
+  have_turbo_stream.with_action(:replace).targeting("header")
+)
+```
+
+When a stream is missing the failure message lists each unmatched matcher so you can see at a glance which ones failed.
+
+### `assert_no_turbo_stream`
+
+Alias of `have_turbo_stream` for teams that mix RSpec and minitest terminology.
+
+```ruby
+expect(response).not_to assert_no_turbo_stream
+```
+
 ### `have_turbo_frame`
 
 Assert that a response body contains a `<turbo-frame>` element.

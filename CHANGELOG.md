@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+### Added
+
+- `have_turbo_streams(*matchers)` — assert multiple streams in one expectation; failure lists each unmatched stream
+- `assert_no_turbo_stream` — alias of `have_turbo_stream` for teams that mix RSpec/minitest terminology
+- Rich failure messages for `have_turbo_stream` and `have_turbo_frame`: content preview on each found element, plus a "closest match" section with per-constraint pass (✓) / fail (✗) indicators
+
 ## [0.3.0] - 2026-05-28
 
 ### Added
