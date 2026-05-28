@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-28
+
 ### Added
 
 - Full YARD documentation on all public methods, classes, and modules
