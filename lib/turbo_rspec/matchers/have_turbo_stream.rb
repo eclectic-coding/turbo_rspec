@@ -115,12 +115,49 @@ module TurboRspec
       end
 
       def found_streams_message
-        if @streams.empty?
-          "but no turbo streams were found in the response"
-        else
-          actions = @streams.map { |s| "  <turbo-stream action=#{s["action"].inspect} target=#{s["target"].inspect}>" }
-          "found turbo streams:\n#{actions.join("\n")}"
+        return "but no turbo streams were found in the response" if @streams.empty?
+
+        lines = ["found #{@streams.size} turbo stream(s):"]
+        @streams.each_with_index do |s, i|
+          content_preview = s.text.strip.slice(0, 50)
+          content_preview = content_preview.empty? ? "(empty)" : content_preview.inspect
+          lines << "  #{i + 1}. action=#{s["action"].inspect} target=#{s["target"].inspect} content=#{content_preview}"
         end
+
+        closest = closest_match
+        lines << ""
+        lines << "closest match (#{count_matching_constraints(closest)}/#{constraint_count} constraint(s) matched):"
+        lines.concat(constraint_diff(closest))
+
+        lines.join("\n")
+      end
+
+      def closest_match
+        @streams.max_by { |s| count_matching_constraints(s) }
+      end
+
+      def count_matching_constraints(stream)
+        count = 0
+        count += 1 if !@action.nil? && matches_action?(stream)
+        count += 1 if !@target.nil? && matches_target?(stream)
+        count += 1 if !@target_all.nil? && matches_target_all?(stream)
+        count += 1 if !@content.nil? && matches_content?(stream)
+        count += 1 if !@partial.nil? && matches_partial?(stream)
+        count
+      end
+
+      def constraint_count
+        [@action, @target, @target_all, @content, @partial].count { |c| !c.nil? }
+      end
+
+      def constraint_diff(stream)
+        lines = []
+        lines << "  #{matches_action?(stream) ? "✓" : "✗"} action:   expected #{@action.inspect}, got #{stream["action"].inspect}" if @action
+        lines << "  #{matches_target?(stream) ? "✓" : "✗"} target:   expected #{@target.inspect}, got #{stream["target"].inspect}" if @target
+        lines << "  #{matches_target_all?(stream) ? "✓" : "✗"} targets:  expected #{@target_all.inspect}, got #{stream["targets"].inspect}" if @target_all
+        lines << "  #{matches_content?(stream) ? "✓" : "✗"} content:  expected to include #{@content.inspect}, got #{stream.text.strip.slice(0, 50).inspect}" if @content
+        lines << "  #{matches_partial?(stream) ? "✓" : "✗"} rendering: expected to include #{@partial.inspect}" if @partial
+        lines
       end
     end
   end
