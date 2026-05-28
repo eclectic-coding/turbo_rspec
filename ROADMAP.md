@@ -5,19 +5,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 ---
 
 
-## v0.2.0 — Broadcast matchers
-
-**Goal:** cover the broadcast side — jobs/services that push streams over ActionCable.
-
-- `have_broadcasted_turbo_stream_to(channel_or_object)` — wraps ActionCable's test adapter
-  - Same fluent chain as `have_turbo_stream`: `.with_action`, `.targeting`, `.rendering`, `.with_content`
-  - Count qualifiers: `.exactly(n).times`, `.at_least(n).times`, `.at_most(n).times`, `.once`, `.twice`
-  - Works inside `expect { }.to have_broadcasted_turbo_stream_to(...)` blocks
-- Helper `broadcast_turbo_stream_to` alias for symmetry with ActionCable's naming
-- Docs: "testing broadcasts in job specs and service specs"
-
----
-
 ## v0.3.0 — Capybara / system spec integration
 
 **Goal:** assertions that work against a live browser in feature/system specs.
