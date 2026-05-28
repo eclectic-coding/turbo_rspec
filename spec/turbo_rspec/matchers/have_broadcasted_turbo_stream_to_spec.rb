@@ -143,6 +143,84 @@ RSpec.describe TurboRspec::Matchers::HaveBroadcastedTurboStreamTo do
     end
   end
 
+  describe "stream name resolution" do
+    it "uses to_s on a non-string object when Turbo is not defined" do
+      obj = double(to_s: "custom_stream")
+      expect { broadcast("custom_stream", turbo_stream_html) }
+        .to have_broadcasted_turbo_stream_to(obj)
+    end
+
+    it "calls Turbo::StreamsChannel.broadcasting_for when Turbo is defined" do
+      stub_const("Turbo::StreamsChannel", double(broadcasting_for: "turbo_stream"))
+      expect { broadcast("turbo_stream", turbo_stream_html) }
+        .to have_broadcasted_turbo_stream_to(double)
+    end
+  end
+
+  describe "non-JSON broadcast payload" do
+    it "does not match and does not raise" do
+      allow(ActionCable.server.pubsub).to receive(:broadcasts)
+        .and_return([], ["not-json{"])
+      expect { nil }.not_to have_broadcasted_turbo_stream_to(stream)
+    end
+  end
+
+  describe "failure messages" do
+    describe "constraint_description branches" do
+      it "includes targeting in failure message" do
+        m = have_broadcasted_turbo_stream_to(stream).targeting("list")
+        m.matches?(-> {})
+        expect(m.failure_message).to include('targeting "list"')
+      end
+
+      it "includes targeting_all in failure message" do
+        m = have_broadcasted_turbo_stream_to(stream).targeting_all(".items")
+        m.matches?(-> {})
+        expect(m.failure_message).to include('targeting all ".items"')
+      end
+
+      it "includes with_content in failure message" do
+        m = have_broadcasted_turbo_stream_to(stream).with_content("Hello")
+        m.matches?(-> {})
+        expect(m.failure_message).to include('with content "Hello"')
+      end
+
+      it "includes rendering in failure message" do
+        m = have_broadcasted_turbo_stream_to(stream).rendering("_item.html.erb")
+        m.matches?(-> {})
+        expect(m.failure_message).to include('rendering "_item.html.erb"')
+      end
+    end
+
+    describe "count_description branches" do
+      it "includes exactly count in failure message" do
+        m = have_broadcasted_turbo_stream_to(stream).exactly(2).times
+        m.matches?(-> {})
+        expect(m.failure_message).to include("exactly 2 time(s)")
+      end
+
+      it "includes at_least count in failure message" do
+        m = have_broadcasted_turbo_stream_to(stream).at_least(3).times
+        m.matches?(-> {})
+        expect(m.failure_message).to include("at least 3 time(s)")
+      end
+
+      it "includes at_most count in failure message" do
+        m = have_broadcasted_turbo_stream_to(stream).at_most(2).times
+        m.matches?(-> { 5.times { broadcast(stream, turbo_stream_html) } })
+        expect(m.failure_message).to include("at most 2 time(s)")
+      end
+    end
+
+    describe "found_message branch" do
+      it "reports count when broadcasts exist but count qualifier not met" do
+        m = have_broadcasted_turbo_stream_to(stream).exactly(3).times
+        m.matches?(-> { broadcast(stream, turbo_stream_html) })
+        expect(m.failure_message).to include("found 1 matching broadcast(s)")
+      end
+    end
+  end
+
   describe "#description" do
     it "describes the matcher" do
       expect(have_broadcasted_turbo_stream_to(stream).with_action(:append).targeting("list").description)
