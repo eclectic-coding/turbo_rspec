@@ -22,7 +22,10 @@ end
 
 ### Rails + turbo-rails (automatic)
 
-No setup needed. When `turbo-rails` is in your bundle, `TurboRspec::Matchers` is automatically included in all `type: :request` example groups.
+No setup needed. When `turbo-rails` is in your bundle:
+
+- `TurboRspec::Matchers` is automatically included in all `type: :request` example groups
+- `TurboRspec::Capybara::Matchers` is automatically included in all `type: :system` and `type: :feature` example groups when `capybara` is also present
 
 ### Manual include
 
@@ -31,7 +34,8 @@ For non-Rails projects or custom contexts, include the matchers explicitly:
 ```ruby
 # spec/spec_helper.rb
 RSpec.configure do |config|
-  config.include TurboRspec::Matchers
+  config.include TurboRspec::Matchers                 # request specs
+  config.include TurboRspec::Capybara::Matchers       # system/feature specs
 end
 ```
 
@@ -40,7 +44,7 @@ end
 ```ruby
 # spec/support/turbo_rspec.rb
 TurboRspec.configure do |config|
-  config.auto_include = false  # disable automatic inclusion into request specs
+  config.auto_include = false  # disable automatic inclusion
 end
 ```
 
@@ -106,6 +110,76 @@ expect(response).to have_turbo_frame.with_id("post").rendering("posts/_post")
 expect(response).not_to have_turbo_frame.with_id("notifications")
 ```
 
+### `have_broadcasted_turbo_stream_to`
+
+Assert that a block broadcasts a `<turbo-stream>` over ActionCable. Requires ActionCable's test adapter.
+
+```ruby
+# Basic — any broadcast to the stream
+expect { MyJob.perform_now }.to have_broadcasted_turbo_stream_to("notifications")
+
+# With constraints (same chain as have_turbo_stream)
+expect { MyJob.perform_now }.to have_broadcasted_turbo_stream_to("notifications")
+  .with_action(:append)
+  .targeting("messages")
+  .with_content("Hello")
+
+# Count qualifiers
+expect { MyJob.perform_now }.to have_broadcasted_turbo_stream_to("notifications").once
+expect { MyJob.perform_now }.to have_broadcasted_turbo_stream_to("notifications").exactly(3).times
+expect { MyJob.perform_now }.to have_broadcasted_turbo_stream_to("notifications").at_least(2).times
+
+# Alias
+expect { MyJob.perform_now }.to broadcast_turbo_stream_to("notifications")
+
+# Negation
+expect { MyJob.perform_now }.not_to have_broadcasted_turbo_stream_to("notifications")
+```
+
+### `have_turbo_frame` (system/feature specs)
+
+Assert that a `<turbo-frame>` element is present on the page (Capybara).
+
+```ruby
+# Basic
+expect(page).to have_turbo_frame("messages")
+
+# With content
+expect(page).to have_turbo_frame("messages").with_content("Hello")
+
+# Loaded (frame finished loading)
+expect(page).to have_turbo_frame("messages").loaded
+
+# Negation
+expect(page).not_to have_turbo_frame("notifications")
+```
+
+### `within_turbo_frame`
+
+Scope Capybara assertions to a specific frame's DOM.
+
+```ruby
+within_turbo_frame("messages") do
+  expect(page).to have_content("Hello")
+  click_button "Reply"
+end
+```
+
+### `have_turbo_stream_tag`
+
+Assert that a `<turbo-stream-source>` subscription element is on the page.
+
+```ruby
+# Any stream source
+expect(page).to have_turbo_stream_tag
+
+# With signed stream name
+expect(page).to have_turbo_stream_tag("signed_stream_name")
+
+# Negation
+expect(page).not_to have_turbo_stream_tag
+```
+
 ## Example: request spec
 
 ```ruby
@@ -132,6 +206,25 @@ RSpec.describe "Messages", type: :request do
         .with_action(:remove)
         .targeting("message_#{message.id}")
     end
+  end
+end
+```
+
+## Example: system spec
+
+```ruby
+RSpec.describe "Messages", type: :system do
+  it "appends a new message via Turbo Frame" do
+    visit messages_path
+    fill_in "Body", with: "Hello"
+    click_button "Send"
+
+    expect(page).to have_turbo_frame("messages").with_content("Hello")
+  end
+
+  it "shows the subscription stream tag" do
+    visit messages_path
+    expect(page).to have_turbo_stream_tag
   end
 end
 ```

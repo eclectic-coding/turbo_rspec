@@ -47,10 +47,27 @@ RSpec.describe TurboRspec do
     let(:rspec_config) { double("RSpec::Core::Configuration") }
 
     context "when auto_include is true and turbo-rails is present" do
-      before { allow(Gem.loaded_specs).to receive(:key?).with("turbo-rails").and_return(true) }
+      before do
+        allow(Gem.loaded_specs).to receive(:key?).with("turbo-rails").and_return(true)
+        allow(Gem.loaded_specs).to receive(:key?).with("capybara").and_return(false)
+      end
 
       it "includes Matchers into request example groups" do
         expect(rspec_config).to receive(:include).with(TurboRspec::Matchers, type: :request)
+        described_class.install_rspec_integration(rspec_config)
+      end
+    end
+
+    context "when auto_include is true and both turbo-rails and capybara are present" do
+      before do
+        allow(Gem.loaded_specs).to receive(:key?).with("turbo-rails").and_return(true)
+        allow(Gem.loaded_specs).to receive(:key?).with("capybara").and_return(true)
+      end
+
+      it "includes Capybara::Matchers into system and feature example groups" do
+        allow(rspec_config).to receive(:include).with(TurboRspec::Matchers, type: :request)
+        expect(rspec_config).to receive(:include).with(TurboRspec::Capybara::Matchers, type: :system)
+        expect(rspec_config).to receive(:include).with(TurboRspec::Capybara::Matchers, type: :feature)
         described_class.install_rspec_integration(rspec_config)
       end
     end
