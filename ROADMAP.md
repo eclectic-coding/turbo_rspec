@@ -10,13 +10,7 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 ### Gem hygiene
 
-- Fill out `turbo_rspec.gemspec` (summary, description, homepage, source_code_uri, changelog_uri)
-- Declare runtime dependency on `nokogiri` (HTML parsing) and `turbo-rails`
-- Enable `rubygems_mfa_required`
-- Set up GitHub Actions CI (Ruby 3.3/3.4/4.0 × Rails 7.2/8.0)
 - Set up RubyGems Trusted Publishing (OIDC, no stored API key)
-- Replace placeholder README with real usage docs and examples
-- Replace placeholder CHANGELOG entry with real notes
 
 ---
 
