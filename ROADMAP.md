@@ -5,16 +5,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 ---
 
 
-## v0.3.0 — Capybara / system spec integration
-
-**Goal:** assertions that work against a live browser in feature/system specs.
-
-- `have_turbo_frame(id)` Capybara matcher — waits for the frame to appear on the page
-  - `.with_content(...)` — delegates to Capybara's `have_content` with correct scope
-  - `.loaded` — asserts `[complete]` attribute is present (frame finished loading)
-- `within_turbo_frame(id) { ... }` — scopes Capybara assertions to the frame's DOM
-- `have_turbo_stream_tag` — asserts a `<turbo-stream-source>` subscription element exists on the page
-- Docs: system spec patterns, async update testing
 
 ---
 

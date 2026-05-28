@@ -1,5 +1,14 @@
 ## [Unreleased]
 
+### Added
+
+- `have_turbo_frame(id)` Capybara matcher for system/feature specs — asserts a `<turbo-frame>` element is on the page
+  - `.with_content(text)` — asserts text content within the frame
+  - `.loaded` — asserts the frame has the `[complete]` attribute (finished loading)
+- `have_turbo_stream_tag` Capybara matcher — asserts a `<turbo-stream-source>` subscription element is present; accepts an optional signed stream name
+- `within_turbo_frame(id) { }` — scopes Capybara assertions to the frame's DOM
+- Auto-include `TurboRspec::Capybara::Matchers` into `type: :system` and `type: :feature` example groups when both `turbo-rails` and `capybara` are present
+
 ## [0.2.0] - 2026-05-28
 
 ### Added
