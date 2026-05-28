@@ -84,8 +84,37 @@ RSpec.describe TurboRspec::Matchers::HaveTurboStream do
 
     it "lists found streams when constraints do not match" do
       matcher.matches?(stream(action: "append", target: "list"))
-      expect(matcher.failure_message).to include("found turbo streams")
-      expect(matcher.failure_message).to include("<turbo-stream action=")
+      expect(matcher.failure_message).to include("found 1 turbo stream(s)")
+      expect(matcher.failure_message).to include('action="append"')
+    end
+
+    it "shows closest match with constraint diff" do
+      m = have_turbo_stream.with_action(:remove).targeting("list")
+      m.matches?(stream(action: "append", target: "list"))
+      expect(m.failure_message).to include("closest match")
+      expect(m.failure_message).to include("1/2")
+      expect(m.failure_message).to include("✗ action")
+      expect(m.failure_message).to include("✓ target")
+    end
+
+    it "shows content in constraint diff" do
+      m = have_turbo_stream.with_content("Bye")
+      m.matches?(stream(action: "append", target: "list", content: "Hello"))
+      expect(m.failure_message).to include("✗ content")
+      expect(m.failure_message).to include("Bye")
+    end
+
+    it "shows targeting_all in constraint diff" do
+      body = '<turbo-stream action="remove" targets=".other"><template></template></turbo-stream>'
+      m = have_turbo_stream.targeting_all(".items")
+      m.matches?(body)
+      expect(m.failure_message).to include("✗ targets")
+    end
+
+    it "shows rendering in constraint diff" do
+      m = have_turbo_stream.rendering("_missing.html.erb")
+      m.matches?(stream(action: "append", target: "list"))
+      expect(m.failure_message).to include("✗ rendering")
     end
 
     it "includes targeting_all in constraint description" do

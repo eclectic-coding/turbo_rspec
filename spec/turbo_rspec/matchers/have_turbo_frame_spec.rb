@@ -67,7 +67,23 @@ RSpec.describe TurboRspec::Matchers::HaveTurboFrame do
 
     it "lists found frames when id mismatches" do
       matcher.matches?(frame(id: "other"))
-      expect(matcher.failure_message).to include("<turbo-frame id=")
+      expect(matcher.failure_message).to include("found 1 turbo frame(s)")
+      expect(matcher.failure_message).to include('id="other"')
+    end
+
+    it "shows closest match with constraint diff" do
+      m = have_turbo_frame.with_id("messages").with_content("Hello")
+      m.matches?(frame(id: "messages", content: "Goodbye"))
+      expect(m.failure_message).to include("closest match")
+      expect(m.failure_message).to include("1/2")
+      expect(m.failure_message).to include("✓ id")
+      expect(m.failure_message).to include("✗ content")
+    end
+
+    it "shows rendering in constraint diff" do
+      m = have_turbo_frame.rendering("_missing.html.erb")
+      m.matches?(frame(id: "other"))
+      expect(m.failure_message).to include("✗ rendering")
     end
 
     it "provides negated failure message" do
