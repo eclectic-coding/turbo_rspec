@@ -104,17 +104,44 @@ RSpec.describe TurboRspec::Matchers::HaveTurboStream do
       expect(m.failure_message).to include("Bye")
     end
 
-    it "shows targeting_all in constraint diff" do
+    it "shows ✓ action when action matches but other constraint fails" do
+      m = have_turbo_stream.with_action(:append).targeting("other")
+      m.matches?(stream(action: "append", target: "list"))
+      expect(m.failure_message).to include("✓ action")
+      expect(m.failure_message).to include("✗ target")
+    end
+
+    it "shows ✓ content when content matches but other constraint fails" do
+      m = have_turbo_stream.with_action(:remove).with_content("Hello")
+      m.matches?(stream(action: "append", target: "list", content: "Hello"))
+      expect(m.failure_message).to include("✓ content")
+    end
+
+    it "shows targeting_all in constraint diff — mismatch" do
       body = '<turbo-stream action="remove" targets=".other"><template></template></turbo-stream>'
       m = have_turbo_stream.targeting_all(".items")
       m.matches?(body)
       expect(m.failure_message).to include("✗ targets")
     end
 
-    it "shows rendering in constraint diff" do
+    it "shows ✓ targeting_all when it matches but other constraint fails" do
+      body = '<turbo-stream action="remove" targets=".items"><template></template></turbo-stream>'
+      m = have_turbo_stream.with_action(:append).targeting_all(".items")
+      m.matches?(body)
+      expect(m.failure_message).to include("✓ targets")
+    end
+
+    it "shows rendering in constraint diff — mismatch" do
       m = have_turbo_stream.rendering("_missing.html.erb")
       m.matches?(stream(action: "append", target: "list"))
       expect(m.failure_message).to include("✗ rendering")
+    end
+
+    it "shows ✓ rendering when it matches but other constraint fails" do
+      body = '<turbo-stream action="remove" target="list"><template><!-- _item.html.erb --></template></turbo-stream>'
+      m = have_turbo_stream.with_action(:append).rendering("_item.html.erb")
+      m.matches?(body)
+      expect(m.failure_message).to include("✓ rendering")
     end
 
     it "includes targeting_all in constraint description" do

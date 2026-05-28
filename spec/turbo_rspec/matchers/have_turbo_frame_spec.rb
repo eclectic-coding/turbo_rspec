@@ -80,10 +80,23 @@ RSpec.describe TurboRspec::Matchers::HaveTurboFrame do
       expect(m.failure_message).to include("✗ content")
     end
 
-    it "shows rendering in constraint diff" do
+    it "shows rendering in constraint diff — mismatch" do
       m = have_turbo_frame.rendering("_missing.html.erb")
       m.matches?(frame(id: "other"))
       expect(m.failure_message).to include("✗ rendering")
+    end
+
+    it "shows ✓ content when content matches but id fails" do
+      m = have_turbo_frame.with_id("other").with_content("Hello")
+      m.matches?(frame(id: "messages", content: "Hello"))
+      expect(m.failure_message).to include("✓ content")
+    end
+
+    it "shows ✓ rendering when it matches but id fails" do
+      body = '<turbo-frame id="wrong"><!-- _post.html.erb --></turbo-frame>'
+      m = have_turbo_frame.with_id("other").rendering("_post.html.erb")
+      m.matches?(body)
+      expect(m.failure_message).to include("✓ rendering")
     end
 
     it "provides negated failure message" do

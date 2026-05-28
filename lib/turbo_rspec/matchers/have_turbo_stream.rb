@@ -125,17 +125,14 @@ module TurboRspec
         end
 
         closest = closest_match
-        if closest
-          lines << ""
-          lines << "closest match (#{count_matching_constraints(closest)}/#{constraint_count} constraint(s) matched):"
-          lines.concat(constraint_diff(closest))
-        end
+        lines << ""
+        lines << "closest match (#{count_matching_constraints(closest)}/#{constraint_count} constraint(s) matched):"
+        lines.concat(constraint_diff(closest))
 
         lines.join("\n")
       end
 
       def closest_match
-        return nil if @streams.empty?
         @streams.max_by { |s| count_matching_constraints(s) }
       end
 
