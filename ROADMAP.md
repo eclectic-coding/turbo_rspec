@@ -11,7 +11,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 - Full YARD documentation on all public methods and classes
 - Migration guide: "replacing hand-rolled Turbo helpers in your test suite"
 - Cookbook: common patterns (lazy-loaded frames, job broadcast testing, multi-stream responses, controller specs)
-- Hosted on RubyDoc.info
 
 ---
 
