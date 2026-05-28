@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.4.0] - 2026-05-28
+
 ### Added
 
 - `have_turbo_streams(*matchers)` — assert multiple streams in one expectation; failure lists each unmatched stream
