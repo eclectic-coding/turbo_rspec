@@ -113,4 +113,20 @@ RSpec.describe TurboRspec::Matchers::HaveTurboStream do
         .to eq('have turbo stream with action "append" targeting "list"')
     end
   end
+
+  describe "assert_no_turbo_stream alias" do
+    it "is available as an alias" do
+      expect("<div></div>").not_to assert_no_turbo_stream
+    end
+  end
+
+  describe "aggregate_failures" do
+    it "works inside aggregate_failures blocks" do
+      body = stream(action: "append", target: "list") + stream(action: "replace", target: "header")
+      aggregate_failures do
+        expect(body).to have_turbo_stream.with_action(:append).targeting("list")
+        expect(body).to have_turbo_stream.with_action(:replace).targeting("header")
+      end
+    end
+  end
 end
