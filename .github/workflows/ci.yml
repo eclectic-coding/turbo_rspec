@@ -9,6 +9,20 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+
+      - run: bundle exec standardrb --no-fix
+
   test:
     name: Ruby ${{ matrix.ruby }}
     runs-on: ubuntu-latest
@@ -25,8 +39,4 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      - name: Lint
-        run: bundle exec standardrb --no-fix
-
-      - name: Test
-        run: bundle exec rspec
+      - run: bundle exec rspec
