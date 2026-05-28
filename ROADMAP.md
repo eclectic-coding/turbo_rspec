@@ -4,16 +4,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 ---
 
-## v0.7.0 — Documentation
-
-**Goal:** full docs before freezing the API.
-
-- Full YARD documentation on all public methods and classes
-- Migration guide: "replacing hand-rolled Turbo helpers in your test suite"
-- Cookbook: common patterns (lazy-loaded frames, job broadcast testing, multi-stream responses, controller specs)
-
----
-
 ## v1.0.0 — Stable API
 
 **Goal:** API freeze. Commit to semver stability. Make the gem the obvious default choice.

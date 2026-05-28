@@ -8,6 +8,8 @@
 
 RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails) — assert Turbo Stream responses, Turbo Frame content, and ActionCable broadcasts without hand-rolling helpers in every project.
 
+**Docs:** [API Reference](https://rubydoc.info/gems/turbo_rspec) · [Migration Guide](docs/migration_guide.md) · [Cookbook](docs/cookbook.md)
+
 ## Installation
 
 Add to your application's `Gemfile`:
