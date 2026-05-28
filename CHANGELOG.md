@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.3.0] - 2026-05-28
+
 ### Added
 
 - `have_turbo_frame(id)` Capybara matcher for system/feature specs — asserts a `<turbo-frame>` element is on the page
