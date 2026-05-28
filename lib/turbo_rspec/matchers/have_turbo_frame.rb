@@ -60,8 +60,6 @@ module TurboRspec
 
       def parse_frames(body)
         Nokogiri::HTML5.fragment(body).css("turbo-frame")
-      rescue
-        Nokogiri::HTML.fragment(body).css("turbo-frame")
       end
 
       def frame_matches?(frame)

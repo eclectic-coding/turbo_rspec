@@ -48,6 +48,11 @@ RSpec.describe TurboRspec::Matchers::HaveTurboFrame do
       body = frame(id: "header") + frame(id: "footer", content: "Footer text")
       expect(body).to have_turbo_frame.with_id("footer").with_content("Footer text")
     end
+
+    it "accepts a response object with a body method" do
+      response = double(body: frame(id: "messages"))
+      expect(response).to have_turbo_frame.with_id("messages")
+    end
   end
 
   describe "failure messages" do
