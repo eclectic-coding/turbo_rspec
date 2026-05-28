@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+### Added
+
+- Full YARD documentation on all public methods, classes, and modules
+- `docs/migration_guide.md` — how to replace hand-rolled Turbo helpers with `turbo_rspec` matchers
+- `docs/cookbook.md` — common patterns: request specs, lazy frames, broadcast job specs, multi-stream responses, Minitest, controller specs
+
 ## [0.6.0] - 2026-05-28
 
 ### Added

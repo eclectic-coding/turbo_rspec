@@ -4,6 +4,23 @@ require "nokogiri"
 
 module TurboRspec
   module Matchers
+    # RSpec matcher for asserting that a response body contains a
+    # +<turbo-stream>+ element. Constraints are applied via a fluent chain;
+    # all specified constraints must match the *same* stream element.
+    #
+    # @example Basic usage
+    #   expect(response).to have_turbo_stream
+    #
+    # @example Chained constraints
+    #   expect(response).to have_turbo_stream
+    #     .with_action(:append)
+    #     .targeting("messages")
+    #     .with_content("Hello")
+    #
+    # @example Negation
+    #   expect(response).not_to have_turbo_stream.with_action(:replace)
+    #
+    # @see TurboRspec::Matchers#have_turbo_stream
     class HaveTurboStream
       def initialize
         @action = nil
@@ -13,49 +30,71 @@ module TurboRspec
         @partial = nil
       end
 
+      # Constrains the match to streams with the given action.
+      # @param action [Symbol, String] e.g. +:append+, +:replace+, +:remove+, +:refresh+, +:morph+
+      # @return [self]
       def with_action(action)
         @action = action.to_s
         self
       end
 
+      # Constrains the match to streams targeting a specific DOM id.
+      # @param dom_id [String]
+      # @return [self]
       def targeting(dom_id)
         @target = dom_id.to_s
         self
       end
 
+      # Constrains the match to streams targeting a CSS selector (the +targets+ attribute).
+      # @param selector [String] e.g. +".message-item"+
+      # @return [self]
       def targeting_all(selector)
         @target_all = selector.to_s
         self
       end
 
+      # Constrains the match to streams whose template content includes the given text.
+      # @param text [String]
+      # @return [self]
       def with_content(text)
         @content = text.to_s
         self
       end
 
+      # Constrains the match to streams whose rendered HTML includes the given partial path.
+      # @param partial [String] e.g. +"messages/_message"+
+      # @return [self]
       def rendering(partial)
         @partial = partial.to_s
         self
       end
 
+      # @param response_or_body [#body, String]
+      # @return [Boolean]
       def matches?(response_or_body)
         @body = extract_body(response_or_body)
         @streams = parse_streams(@body)
         @streams.any? { |stream| stream_matches?(stream) }
       end
 
+      # @param response_or_body [#body, String]
+      # @return [Boolean]
       def does_not_match?(response_or_body)
         !matches?(response_or_body)
       end
 
+      # @return [String]
       def failure_message
         "expected response to contain a turbo stream#{constraint_description}\n#{found_streams_message}"
       end
 
+      # @return [String]
       def failure_message_when_negated
         "expected response not to contain a turbo stream#{constraint_description}"
       end
 
+      # @return [String]
       def description
         "have turbo stream#{constraint_description}"
       end

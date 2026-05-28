@@ -4,6 +4,18 @@ require "nokogiri"
 
 module TurboRspec
   module Matchers
+    # RSpec matcher for asserting that a response body contains a
+    # +<turbo-frame>+ element. Use in request or controller specs.
+    #
+    # @example Basic usage
+    #   expect(response).to have_turbo_frame
+    #
+    # @example With constraints
+    #   expect(response).to have_turbo_frame
+    #     .with_id("messages")
+    #     .with_content("Hello")
+    #
+    # @see TurboRspec::Matchers#have_turbo_frame
     class HaveTurboFrame
       def initialize
         @id = nil
@@ -11,35 +23,50 @@ module TurboRspec
         @partial = nil
       end
 
+      # Constrains the match to frames with the given id attribute.
+      # @param id [String]
+      # @return [self]
       def with_id(id)
         @id = id.to_s
         self
       end
 
+      # Constrains the match to frames whose content includes the given text.
+      # @param text [String]
+      # @return [self]
       def with_content(text)
         @content = text.to_s
         self
       end
 
+      # Constrains the match to frames whose HTML includes the given partial path.
+      # @param partial [String]
+      # @return [self]
       def rendering(partial)
         @partial = partial.to_s
         self
       end
 
+      # @param response_or_body [#body, String]
+      # @return [Boolean]
       def matches?(response_or_body)
         @body = extract_body(response_or_body)
         @frames = parse_frames(@body)
         @frames.any? { |frame| frame_matches?(frame) }
       end
 
+      # @param response_or_body [#body, String]
+      # @return [Boolean]
       def does_not_match?(response_or_body)
         !matches?(response_or_body)
       end
 
+      # @return [String]
       def failure_message
         "expected response to contain a turbo frame#{constraint_description}\n#{found_frames_message}"
       end
 
+      # @return [String]
       def failure_message_when_negated
         "expected response not to contain a turbo frame#{constraint_description}"
       end

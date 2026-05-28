@@ -16,3 +16,4 @@ gem "rspec", "~> 3.0"
 gem "simplecov", require: false
 
 gem "standard", "~> 1.3"
+gem "yard", "~> 0.9", require: false
