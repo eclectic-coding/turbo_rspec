@@ -6,7 +6,15 @@
 [![Ruby](https://img.shields.io/badge/ruby-%3E%3D%203.3-ruby)](https://rubygems.org/gems/turbo_rspec)
 [![codecov](https://codecov.io/gh/eclectic-coding/turbo_rspec/branch/main/graph/badge.svg)](https://codecov.io/gh/eclectic-coding/turbo_rspec)
 
-RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails) — assert Turbo Stream responses, Turbo Frame content, and ActionCable broadcasts without hand-rolling helpers in every project.
+Drop-in test matchers for [hotwired/turbo-rails](https://github.com/hotwired/turbo-rails) — replace every hand-rolled Turbo helper in your test suite with a single gem.
+
+- **Request/controller specs** — `have_turbo_stream`, `have_turbo_frame`, `have_turbo_streams`
+- **Broadcast specs** — `have_broadcasted_turbo_stream_to` with count qualifiers
+- **System/feature specs** — Capybara matchers: `have_turbo_frame`, `have_turbo_stream_tag`, `within_turbo_frame`
+- **Minitest** — `assert_turbo_stream`, `refute_turbo_stream`, `assert_turbo_frame`, `refute_turbo_frame`
+- **Factory helpers** — `turbo_stream_html`, `turbo_frame_html`
+- **Shared examples** — `it_behaves_like "a turbo stream response"`
+- **Auto-included** — zero setup required when `turbo-rails` is in your bundle
 
 **Docs:** [API Reference](https://rubydoc.info/gems/turbo_rspec) · [Migration Guide](docs/migration_guide.md) · [Cookbook](docs/cookbook.md)
 
@@ -21,6 +29,14 @@ end
 ```
 
 ## Setup
+
+### Generator
+
+Run the install generator to scaffold a `spec/support/turbo_rspec.rb` configuration file:
+
+```bash
+rails generate turbo_rspec:install
+```
 
 ### Rails + turbo-rails (automatic)
 

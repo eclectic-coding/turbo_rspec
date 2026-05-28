@@ -8,8 +8,12 @@ Gem::Specification.new do |spec|
   spec.authors = ["Chuck Smith"]
   spec.email = ["eclectic-coding@users.noreply.github.com"]
 
-  spec.summary = "RSpec matchers for Turbo Streams, Turbo Frames, and ActionCable broadcasts."
-  spec.description = "Drop-in RSpec matchers for hotwired/turbo-rails: assert Turbo Stream responses, Turbo Frame content, and ActionCable broadcasts without hand-rolling helpers in every project."
+  spec.summary = "RSpec matchers and Minitest assertions for hotwired/turbo-rails."
+  spec.description = "Drop-in test matchers for hotwired/turbo-rails: assert Turbo Stream responses, " \
+                     "Turbo Frame content, ActionCable broadcasts, and Capybara page assertions. " \
+                     "Includes RSpec matchers (have_turbo_stream, have_turbo_frame, " \
+                     "have_broadcasted_turbo_stream_to), Minitest assertions, factory helpers, " \
+                     "shared examples, and a Rails generator — all auto-included with zero setup."
   spec.homepage = "https://github.com/eclectic-coding/turbo_rspec"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.3.0"

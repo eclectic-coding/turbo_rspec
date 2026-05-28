@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+### Added
+
+- `rails generate turbo_rspec:install` — scaffolds `spec/support/turbo_rspec.rb` with sensible defaults
+- `bin/benchmark` — measures matcher overhead against a 100-element response body
+- Semver format enforced via spec (`TurboRspec::VERSION` must match `MAJOR.MINOR.PATCH`)
+- SimpleCov minimum coverage enforced: 100% line and branch required for CI to pass
+
 ## [0.7.0] - 2026-05-28
 
 ### Added

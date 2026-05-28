@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "benchmark"
+require "turbo_rspec"
+
+include TurboRspec::Matchers
+
+STREAM_BODY = (1..100).map do |i|
+  "<turbo-stream action=\"append\" target=\"item_#{i}\"><template>Content #{i}</template></turbo-stream>"
+end.join.freeze
+
+FRAME_BODY = (1..100).map do |i|
+  "<turbo-frame id=\"frame_#{i}\">Content #{i}</turbo-frame>"
+end.join.freeze
+
+ITERATIONS = 10_000
+
+puts "TurboRspec matcher benchmark (#{ITERATIONS} iterations each)\n\n"
+
+Benchmark.bm(40) do |x|
+  x.report("have_turbo_stream (no constraints)") do
+    ITERATIONS.times { have_turbo_stream.matches?(STREAM_BODY) }
+  end
+
+  x.report("have_turbo_stream.with_action") do
+    ITERATIONS.times { have_turbo_stream.with_action(:append).matches?(STREAM_BODY) }
+  end
+
+  x.report("have_turbo_stream (all constraints)") do
+    ITERATIONS.times do
+      have_turbo_stream
+        .with_action(:append)
+        .targeting("item_50")
+        .with_content("Content 50")
+        .matches?(STREAM_BODY)
+    end
+  end
+
+  x.report("have_turbo_frame (no constraints)") do
+    ITERATIONS.times { have_turbo_frame.matches?(FRAME_BODY) }
+  end
+
+  x.report("have_turbo_frame.with_id") do
+    ITERATIONS.times { have_turbo_frame.with_id("frame_50").matches?(FRAME_BODY) }
+  end
+
+  x.report("have_turbo_streams (3 matchers)") do
+    ITERATIONS.times do
+      have_turbo_streams(
+        have_turbo_stream.with_action(:append).targeting("item_1"),
+        have_turbo_stream.with_action(:append).targeting("item_50"),
+        have_turbo_stream.with_action(:append).targeting("item_100")
+      ).matches?(STREAM_BODY)
+    end
+  end
+end
