@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+### Added
+
+- `TurboRspec::Assertions` — opt-in minitest companion module with `assert_turbo_stream`, `refute_turbo_stream`, `assert_turbo_frame`, `refute_turbo_frame`; no RSpec dependency required
+- `refresh` and `morph` action support confirmed working via compatibility specs
+- Multi-stream response body parsing confirmed — a single response body with multiple `<turbo-stream>` tags works with all matchers
+- Graceful no-op when `turbo-rails` is not in the Gemfile — no `LoadError`
+- CI Rails matrix: Ruby 3.3/3.4/4.0 × Rails 7.2/8.0/8.1
+
 ## [0.4.0] - 2026-05-28
 
 ### Added

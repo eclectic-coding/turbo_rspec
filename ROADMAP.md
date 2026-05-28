@@ -4,22 +4,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 ---
 
-
----
-
-## v0.5.0 — Compatibility and edge cases
-
-**Goal:** harden the gem against real-world app variations.
-
-- Rails 7.2/8.0/8.1 and Turbo 1.x/2.x compatibility matrix in CI (7.1 is EOL)
-- Multi-stream response body parsing (a single response can contain multiple `<turbo-stream>` tags)
-- `refresh` action support (Turbo 8 page refresh streams)
-- `morph` action support (Turbo Morphing)
-- Graceful no-op when `turbo-rails` is not in the Gemfile (no `LoadError`)
-- Minitest module (`TurboRspec::Assertions`) as opt-in companion (no RSpec dependency for that module)
-
----
-
 ## v0.6.0 — Testing utilities
 
 **Goal:** reduce boilerplate in real test suites and close the controller spec gap.

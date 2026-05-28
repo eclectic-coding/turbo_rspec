@@ -3,6 +3,7 @@
 require_relative "turbo_rspec/version"
 require_relative "turbo_rspec/configuration"
 require_relative "turbo_rspec/matchers"
+require_relative "turbo_rspec/assertions"
 require_relative "turbo_rspec/capybara/matchers"
 
 module TurboRspec
