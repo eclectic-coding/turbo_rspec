@@ -4,11 +4,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 ---
 
-## v0.1.0 — Foundation (publish to RubyGems)
-
-**Goal:** a minimal but useful gem that earns a place in people's `Gemfile`. Cover the most common request-spec case: asserting on a Turbo Stream response.
-
----
 
 ## v0.2.0 — Broadcast matchers
 
