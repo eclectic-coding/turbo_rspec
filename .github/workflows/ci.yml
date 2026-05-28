@@ -64,5 +64,5 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: coverage/.resultset.json
+          files: coverage/coverage.json
           fail_ci_if_error: false
