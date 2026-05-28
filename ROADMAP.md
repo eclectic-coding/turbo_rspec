@@ -10,12 +10,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 ### Matchers
 
-- `have_turbo_stream` — assert a response body contains one or more `<turbo-stream>` elements
-  - `.with_action(:append | :prepend | :replace | :update | :remove | :before | :after | :refresh)`
-  - `.targeting("dom_id")` / `.targeting_all(".css-selector")`
-  - `.rendering("path/to/_partial")` — assert the rendered partial within the stream
-  - `.with_content("text")` — assert literal content inside the stream element
-  - Negation: `not_to have_turbo_stream` works out of the box
 - `have_turbo_frame` — assert response contains a `<turbo-frame>` element
   - `.with_id("frame_id")`
   - `.with_content("text")` / `.rendering("partial")`
