@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.1.0] - 2026-06-01
+
 ### Added
 
 - Count qualifiers on `have_turbo_stream`: `.once`, `.twice`, `.exactly(n).times`, `.at_least(n).times`, `.at_most(n).times` — mirrors the API already available on `have_broadcasted_turbo_stream_to`
