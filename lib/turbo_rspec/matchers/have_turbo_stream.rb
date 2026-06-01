@@ -323,7 +323,7 @@ module TurboRspec
         lines << "  #{matches_partial?(stream) ? "✓" : "✗"} rendering: expected to include #{@partial.inspect}" if @partial
         @attributes.each do |k, v|
           actual = stream[k]
-          lines << "  #{actual == v ? "✓" : "✗"} attr[#{k}]: expected #{v.inspect}, got #{actual.inspect}"
+          lines << "  #{(actual == v) ? "✓" : "✗"} attr[#{k}]: expected #{v.inspect}, got #{actual.inspect}"
         end
         lines << "  #{matches_children_only?(stream) ? "✓" : "✗"} children-only: expected attribute to be present" if @children_only
         lines

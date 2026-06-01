@@ -176,7 +176,7 @@ module TurboRspec
         lines << "  #{matches_partial?(frame) ? "✓" : "✗"} rendering: expected to include #{@partial.inspect}" if @partial
         @attributes.each do |k, v|
           actual = frame[k]
-          lines << "  #{actual == v ? "✓" : "✗"} attr[#{k}]: expected #{v.inspect}, got #{actual.inspect}"
+          lines << "  #{(actual == v) ? "✓" : "✗"} attr[#{k}]: expected #{v.inspect}, got #{actual.inspect}"
         end
         lines
       end
