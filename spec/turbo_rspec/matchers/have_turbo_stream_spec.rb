@@ -176,6 +176,68 @@ RSpec.describe TurboRspec::Matchers::HaveTurboStream do
     end
   end
 
+  describe "count qualifiers" do
+    def two_appends
+      stream(action: "append", target: "list") + stream(action: "append", target: "list")
+    end
+
+    it "matches once" do
+      expect(stream).to have_turbo_stream.once
+    end
+
+    it "does not match once when two streams are present" do
+      expect(two_appends).not_to have_turbo_stream.with_action(:append).once
+    end
+
+    it "matches twice" do
+      expect(two_appends).to have_turbo_stream.with_action(:append).twice
+    end
+
+    it "matches exactly(n)" do
+      expect(two_appends).to have_turbo_stream.with_action(:append).exactly(2).times
+    end
+
+    it "does not match exactly(n) when count differs" do
+      expect(stream).not_to have_turbo_stream.exactly(2).times
+    end
+
+    it "matches at_least(n)" do
+      expect(two_appends).to have_turbo_stream.at_least(1).times
+    end
+
+    it "does not match at_least(n) when count is too low" do
+      expect(stream).not_to have_turbo_stream.at_least(2).times
+    end
+
+    it "matches at_most(n)" do
+      expect(stream).to have_turbo_stream.at_most(1).times
+    end
+
+    it "does not match at_most(n) when count exceeds limit" do
+      expect(two_appends).not_to have_turbo_stream.at_most(1).times
+    end
+
+    it "includes count in failure message" do
+      m = have_turbo_stream.with_action(:append).exactly(3).times
+      m.matches?(two_appends)
+      expect(m.failure_message).to include("exactly 3 time(s)")
+      expect(m.failure_message).to include("2 of 2 stream(s) matched")
+    end
+
+    it "includes exactly count in description" do
+      expect(have_turbo_stream.with_action(:append).exactly(2).times.description)
+        .to include("exactly 2 time(s)")
+    end
+
+    it "includes at_least count in description" do
+      expect(have_turbo_stream.at_least(2).times.description).to include("at least 2 time(s)")
+    end
+
+    it "includes at_most count in description" do
+      expect(have_turbo_stream.at_most(3).times.description).to include("at most 3 time(s)")
+    end
+  end
+
   describe "aggregate_failures" do
     it "works inside aggregate_failures blocks" do
       body = stream(action: "append", target: "list") + stream(action: "replace", target: "header")

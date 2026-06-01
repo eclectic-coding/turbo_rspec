@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+### Added
+
+- Count qualifiers on `have_turbo_stream`: `.once`, `.twice`, `.exactly(n).times`, `.at_least(n).times`, `.at_most(n).times` — mirrors the API already available on `have_broadcasted_turbo_stream_to`
+- `have_turbo_frame` (Capybara) `.with_src(url)` chain — asserts the `src` attribute of a lazy-loaded frame
+- `have_turbo_frame` (Capybara) `.lazy` chain — asserts `loading="lazy"` is set on the frame
+
 ## [1.0.0] - 2026-05-28
 
 ### Added
