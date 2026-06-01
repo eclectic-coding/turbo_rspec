@@ -4,11 +4,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 ---
 
-## 1.1 — Matcher parity
-
-- **Count qualifiers on `have_turbo_stream`** — `.once`, `.twice`, `.exactly(n).times` for request specs, matching the parity already present on `have_broadcasted_turbo_stream_to`. A single response with two `append` streams is a real case that currently requires two separate expectations.
-- **Capybara `have_turbo_frame` additions** — `.with_src(url)` (assert the `src` attribute of a lazy frame) and `.lazy` (assert `loading="lazy"` is set). These cover the lazy-loading pattern that's very common with Turbo Frames.
-
 ## 1.2 — Turbo 8 / morphing
 
 - **`with_attributes(hash)` chain** — generic attribute assertion for both `have_turbo_stream` and `have_turbo_frame`. Covers non-standard attributes (e.g., `data-*` passed through custom actions) without needing new named chains per attribute.
