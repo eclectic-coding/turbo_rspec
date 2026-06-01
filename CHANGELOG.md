@@ -1,5 +1,14 @@
 ## [Unreleased]
 
+### Added
+
+- `have_turbo_stream.with_attributes(hash)` — assert arbitrary HTML attributes on a stream element; accepts string or symbol keys
+- `have_turbo_frame.with_attributes(hash)` — same for frame elements in request specs
+- `have_turbo_stream.children_only` — assert the `children-only` attribute on Turbo 8 morph streams
+- `TurboRspec.register_action(:name)` — declare custom Turbo stream actions; `with_action` now raises `ArgumentError` for unrecognised actions with a hint to register them
+- `TurboRspec::BUILTIN_ACTIONS` — public constant listing all built-in action names
+- `TurboRspec.known_actions` — returns built-in + registered custom actions
+
 ## [1.1.0] - 2026-06-01
 
 ### Added

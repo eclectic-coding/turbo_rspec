@@ -1,4 +1,159 @@
 module TurboRspec
   VERSION: String
-  # See the writing guide of rbs: https://github.com/ruby/rbs#guides
+
+  # All built-in Turbo stream action names.
+  BUILTIN_ACTIONS: Array[String]
+
+  def self.configure: () { (Configuration) -> void } -> void
+  def self.configuration: () -> Configuration
+  def self.reset_configuration!: () -> void
+  def self.register_action: (*(Symbol | String) actions) -> void
+  def self.known_actions: () -> Array[String]
+  def self.install_rspec_integration: (untyped config) -> void
+
+  class Error < StandardError
+  end
+
+  class Configuration
+    attr_accessor auto_include: bool
+    attr_accessor custom_actions: Array[String]
+
+    def initialize: () -> void
+  end
+
+  module Matchers
+    def have_turbo_stream: () -> HaveTurboStream
+    def assert_no_turbo_stream: () -> HaveTurboStream
+    def have_turbo_streams: (*HaveTurboStream matchers) -> HaveTurboStreams
+    def have_turbo_frame: () -> HaveTurboFrame
+    def have_broadcasted_turbo_stream_to: (String | untyped stream_or_object) -> HaveBroadcastedTurboStreamTo
+    def broadcast_turbo_stream_to: (String | untyped stream_or_object) -> HaveBroadcastedTurboStreamTo
+
+    class HaveTurboStream
+      def initialize: () -> void
+
+      # Constraint chain
+      def with_action: (Symbol | String action) -> self
+      def targeting: (String dom_id) -> self
+      def targeting_all: (String selector) -> self
+      def with_content: (String text) -> self
+      def rendering: (String partial) -> self
+      def with_attributes: (Hash[String | Symbol, untyped] attrs) -> self
+      def children_only: () -> self
+
+      # Count qualifiers
+      def once: () -> self
+      def twice: () -> self
+      def exactly: (Integer n) -> self
+      def at_least: (Integer n) -> self
+      def at_most: (Integer n) -> self
+      def times: () -> self
+
+      # RSpec matcher interface
+      def matches?: (untyped response_or_body) -> bool
+      def does_not_match?: (untyped response_or_body) -> bool
+      def failure_message: () -> String
+      def failure_message_when_negated: () -> String
+      def description: () -> String
+    end
+
+    class HaveTurboFrame
+      def initialize: () -> void
+
+      # Constraint chain
+      def with_id: (String id) -> self
+      def with_content: (String text) -> self
+      def rendering: (String partial) -> self
+      def with_attributes: (Hash[String | Symbol, untyped] attrs) -> self
+
+      # RSpec matcher interface
+      def matches?: (untyped response_or_body) -> bool
+      def does_not_match?: (untyped response_or_body) -> bool
+      def failure_message: () -> String
+      def failure_message_when_negated: () -> String
+      def description: () -> String
+    end
+
+    class HaveBroadcastedTurboStreamTo
+      def initialize: (String | untyped stream_or_object) -> void
+
+      # Constraint chain (mirrors HaveTurboStream)
+      def with_action: (Symbol | String action) -> self
+      def targeting: (String dom_id) -> self
+      def targeting_all: (String selector) -> self
+      def with_content: (String text) -> self
+      def rendering: (String partial) -> self
+
+      # Count qualifiers
+      def once: () -> self
+      def twice: () -> self
+      def exactly: (Integer n) -> self
+      def at_least: (Integer n) -> self
+      def at_most: (Integer n) -> self
+      def times: () -> self
+
+      # RSpec block-expectation matcher interface
+      def supports_block_expectations?: () -> bool
+      def matches?: (untyped block) -> bool
+      def does_not_match?: (untyped block) -> bool
+      def failure_message: () -> String
+      def failure_message_when_negated: () -> String
+      def description: () -> String
+    end
+
+    class HaveTurboStreams
+      def initialize: (Array[HaveTurboStream] expected_streams) -> void
+      def matches?: (untyped response_or_body) -> bool
+      def does_not_match?: (untyped response_or_body) -> bool
+      def failure_message: () -> String
+      def failure_message_when_negated: () -> String
+      def description: () -> String
+    end
+  end
+
+  module Helpers
+    def turbo_stream_html: (action: Symbol | String, ?target: String?, ?targets: String?, ?content: String?) -> String
+    def turbo_frame_html: (id: String, ?content: String?) -> String
+  end
+
+  module Assertions
+    def assert_turbo_stream: (untyped response_or_body, ?action: (Symbol | String)?, ?target: String?, ?targets: String?, ?content: String?, ?partial: String?, ?message: String?) -> void
+    def refute_turbo_stream: (untyped response_or_body, ?action: (Symbol | String)?, ?target: String?, ?targets: String?, ?content: String?, ?partial: String?, ?message: String?) -> void
+    def assert_turbo_frame: (untyped response_or_body, ?id: String?, ?content: String?, ?partial: String?, ?message: String?) -> void
+    def refute_turbo_frame: (untyped response_or_body, ?id: String?, ?content: String?, ?partial: String?, ?message: String?) -> void
+  end
+
+  module Capybara
+    module Matchers
+      def have_turbo_frame: (String id) -> HaveTurboFrame
+      def have_turbo_stream_tag: (?String? signed_stream_name) -> HaveTurboStreamTag
+      def within_turbo_frame: (String id) { () -> void } -> void
+
+      class HaveTurboFrame
+        def initialize: (String id) -> void
+
+        # Constraint chain
+        def with_content: (String text) -> self
+        def loaded: () -> self
+        def with_src: (String url) -> self
+        def lazy: () -> self
+
+        # Capybara matcher interface
+        def matches?: (untyped page_or_node) -> bool
+        def does_not_match?: (untyped page_or_node) -> bool
+        def failure_message: () -> String
+        def failure_message_when_negated: () -> String
+        def description: () -> String
+      end
+
+      class HaveTurboStreamTag
+        def initialize: (?signed_stream_name: String?) -> void
+        def matches?: (untyped page_or_node) -> bool
+        def does_not_match?: (untyped page_or_node) -> bool
+        def failure_message: () -> String
+        def failure_message_when_negated: () -> String
+        def description: () -> String
+      end
+    end
+  end
 end

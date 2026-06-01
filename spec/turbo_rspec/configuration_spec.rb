@@ -11,6 +11,10 @@ RSpec.describe TurboRspec::Configuration do
     config.auto_include = false
     expect(config.auto_include).to be false
   end
+
+  it "has empty custom_actions by default" do
+    expect(config.custom_actions).to eq([])
+  end
 end
 
 RSpec.describe TurboRspec do
@@ -40,6 +44,46 @@ RSpec.describe TurboRspec do
       described_class.configure { |c| c.auto_include = false }
       described_class.reset_configuration!
       expect(described_class.configuration.auto_include).to be true
+    end
+
+    it "clears registered custom actions" do
+      described_class.register_action(:sparkle)
+      described_class.reset_configuration!
+      expect(described_class.known_actions).not_to include("sparkle")
+    end
+  end
+
+  describe ".register_action" do
+    it "adds the action to known_actions" do
+      described_class.register_action(:sparkle)
+      expect(described_class.known_actions).to include("sparkle")
+    end
+
+    it "accepts multiple actions at once" do
+      described_class.register_action(:sparkle, :highlight)
+      expect(described_class.known_actions).to include("sparkle", "highlight")
+    end
+
+    it "accepts string arguments" do
+      described_class.register_action("sparkle")
+      expect(described_class.known_actions).to include("sparkle")
+    end
+
+    it "is idempotent" do
+      described_class.register_action(:sparkle)
+      described_class.register_action(:sparkle)
+      expect(described_class.known_actions.count("sparkle")).to eq(1)
+    end
+  end
+
+  describe ".known_actions" do
+    it "includes all built-in actions" do
+      expect(described_class.known_actions).to include(*TurboRspec::BUILTIN_ACTIONS)
+    end
+
+    it "includes registered custom actions" do
+      described_class.register_action(:sparkle)
+      expect(described_class.known_actions).to include("sparkle")
     end
   end
 

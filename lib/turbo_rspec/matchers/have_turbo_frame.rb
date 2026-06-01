@@ -21,6 +21,7 @@ module TurboRspec
         @id = nil
         @content = nil
         @partial = nil
+        @attributes = {}
       end
 
       # Constrains the match to frames with the given id attribute.
@@ -44,6 +45,14 @@ module TurboRspec
       # @return [self]
       def rendering(partial)
         @partial = partial.to_s
+        self
+      end
+
+      # Constrains the match to frames that have all of the given HTML attributes.
+      # @param attrs [Hash]
+      # @return [self]
+      def with_attributes(attrs)
+        @attributes = attrs.transform_keys(&:to_s).transform_values(&:to_s)
         self
       end
 
@@ -92,7 +101,8 @@ module TurboRspec
       def frame_matches?(frame)
         matches_id?(frame) &&
           matches_content?(frame) &&
-          matches_partial?(frame)
+          matches_partial?(frame) &&
+          matches_attributes?(frame)
       end
 
       def matches_id?(frame)
@@ -109,11 +119,17 @@ module TurboRspec
         frame.to_html.include?(@partial)
       end
 
+      def matches_attributes?(frame)
+        return true if @attributes.empty?
+        @attributes.all? { |k, v| frame[k] == v }
+      end
+
       def constraint_description
         parts = []
         parts << " with id #{@id.inspect}" if @id
         parts << " with content #{@content.inspect}" if @content
         parts << " rendering #{@partial.inspect}" if @partial
+        parts << " with attributes #{@attributes.inspect}" if @attributes.any?
         parts.join
       end
 
@@ -144,11 +160,13 @@ module TurboRspec
         count += 1 if !@id.nil? && matches_id?(frame)
         count += 1 if !@content.nil? && matches_content?(frame)
         count += 1 if !@partial.nil? && matches_partial?(frame)
+        count += 1 if @attributes.any? && matches_attributes?(frame)
         count
       end
 
       def constraint_count
-        [@id, @content, @partial].count { |c| !c.nil? }
+        [@id, @content, @partial].count { |c| !c.nil? } +
+          (@attributes.any? ? 1 : 0)
       end
 
       def constraint_diff(frame)
@@ -156,6 +174,10 @@ module TurboRspec
         lines << "  #{matches_id?(frame) ? "✓" : "✗"} id:      expected #{@id.inspect}, got #{frame["id"].inspect}" if @id
         lines << "  #{matches_content?(frame) ? "✓" : "✗"} content: expected to include #{@content.inspect}, got #{frame.text.strip.slice(0, 50).inspect}" if @content
         lines << "  #{matches_partial?(frame) ? "✓" : "✗"} rendering: expected to include #{@partial.inspect}" if @partial
+        @attributes.each do |k, v|
+          actual = frame[k]
+          lines << "  #{actual == v ? "✓" : "✗"} attr[#{k}]: expected #{v.inspect}, got #{actual.inspect}"
+        end
         lines
       end
     end

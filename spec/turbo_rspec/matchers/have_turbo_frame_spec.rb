@@ -3,9 +3,10 @@
 RSpec.describe TurboRspec::Matchers::HaveTurboFrame do
   include TurboRspec::Matchers
 
-  def frame(id: "my-frame", content: nil)
+  def frame(id: "my-frame", content: nil, **attrs)
+    attr_str = attrs.map { |k, v| " #{k}=\"#{v}\"" }.join
     inner = content || ""
-    "<turbo-frame id=\"#{id}\">#{inner}</turbo-frame>"
+    "<turbo-frame id=\"#{id}\"#{attr_str}>#{inner}</turbo-frame>"
   end
 
   describe "#matches?" do
@@ -113,6 +114,42 @@ RSpec.describe TurboRspec::Matchers::HaveTurboFrame do
       m = have_turbo_frame.rendering("_post.html.erb")
       m.matches?("<div></div>")
       expect(m.failure_message).to include('rendering "_post.html.erb"')
+    end
+  end
+
+  describe "with_attributes" do
+    it "matches when all specified attributes are present" do
+      expect(frame("data-foo": "bar")).to have_turbo_frame.with_attributes("data-foo" => "bar")
+    end
+
+    it "does not match when an attribute value differs" do
+      expect(frame("data-foo": "bar")).not_to have_turbo_frame.with_attributes("data-foo" => "other")
+    end
+
+    it "does not match when an attribute is absent" do
+      expect(frame).not_to have_turbo_frame.with_attributes("data-foo" => "bar")
+    end
+
+    it "chains with id and content" do
+      expect(frame(id: "msg", content: "Hi", "data-x": "1"))
+        .to have_turbo_frame.with_id("msg").with_content("Hi").with_attributes("data-x" => "1")
+    end
+
+    it "shows ✗ attr in constraint diff" do
+      m = have_turbo_frame.with_id("my-frame").with_attributes("data-foo" => "bar")
+      m.matches?(frame)
+      expect(m.failure_message).to include("✗ attr[data-foo]")
+    end
+
+    it "shows ✓ attr in constraint diff when attribute matches but other constraint fails" do
+      m = have_turbo_frame.with_id("other").with_attributes("data-foo" => "bar")
+      m.matches?(frame("data-foo": "bar"))
+      expect(m.failure_message).to include("✓ attr[data-foo]")
+    end
+
+    it "includes attributes in constraint description" do
+      expect(have_turbo_frame.with_attributes("data-foo" => "bar").description)
+        .to include("data-foo")
     end
   end
 

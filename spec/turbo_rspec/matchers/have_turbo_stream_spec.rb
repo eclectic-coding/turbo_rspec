@@ -3,9 +3,10 @@
 RSpec.describe TurboRspec::Matchers::HaveTurboStream do
   include TurboRspec::Matchers
 
-  def stream(action: "append", target: "list", content: nil)
+  def stream(action: "append", target: "list", content: nil, **attrs)
+    attr_str = attrs.map { |k, v| " #{k}=\"#{v}\"" }.join
     inner = content ? "<template>#{content}</template>" : "<template></template>"
-    "<turbo-stream action=\"#{action}\" target=\"#{target}\">#{inner}</turbo-stream>"
+    "<turbo-stream action=\"#{action}\" target=\"#{target}\"#{attr_str}>#{inner}</turbo-stream>"
   end
 
   describe "#matches?" do
@@ -173,6 +174,109 @@ RSpec.describe TurboRspec::Matchers::HaveTurboStream do
   describe "assert_no_turbo_stream alias" do
     it "is available as an alias" do
       expect("<div></div>").not_to assert_no_turbo_stream
+    end
+  end
+
+  describe "with_attributes" do
+    it "matches when all specified attributes are present" do
+      expect(stream("data-foo": "bar")).to have_turbo_stream.with_attributes("data-foo" => "bar")
+    end
+
+    it "does not match when an attribute value differs" do
+      expect(stream("data-foo": "bar")).not_to have_turbo_stream.with_attributes("data-foo" => "other")
+    end
+
+    it "does not match when an attribute is absent" do
+      expect(stream).not_to have_turbo_stream.with_attributes("data-foo" => "bar")
+    end
+
+    it "matches multiple attributes" do
+      expect(stream("data-a": "1", "data-b": "2")).to have_turbo_stream.with_attributes("data-a" => "1", "data-b" => "2")
+    end
+
+    it "accepts symbol keys" do
+      expect(stream("data-foo": "bar")).to have_turbo_stream.with_attributes("data-foo": "bar")
+    end
+
+    it "chains with other constraints" do
+      expect(stream(action: "append", target: "list", "data-foo": "bar"))
+        .to have_turbo_stream.with_action(:append).targeting("list").with_attributes("data-foo" => "bar")
+    end
+
+    it "includes attributes in failure message" do
+      m = have_turbo_stream.with_attributes("data-foo" => "bar")
+      m.matches?(stream)
+      expect(m.failure_message).to include("data-foo")
+    end
+
+    it "shows ✗ attr in constraint diff" do
+      m = have_turbo_stream.with_action(:append).with_attributes("data-foo" => "bar")
+      m.matches?(stream)
+      expect(m.failure_message).to include("✗ attr[data-foo]")
+    end
+
+    it "shows ✓ attr in constraint diff when attribute matches but other constraint fails" do
+      m = have_turbo_stream.with_action(:remove).with_attributes("data-foo" => "bar")
+      m.matches?(stream("data-foo": "bar"))
+      expect(m.failure_message).to include("✓ attr[data-foo]")
+    end
+  end
+
+  describe "children_only" do
+    let(:morph_stream) { '<turbo-stream action="morph" target="body" children-only><template><p>Hi</p></template></turbo-stream>' }
+    let(:plain_morph)  { '<turbo-stream action="morph" target="body"><template><p>Hi</p></template></turbo-stream>' }
+
+    it "matches a morph stream with children-only attribute" do
+      expect(morph_stream).to have_turbo_stream.with_action(:morph).children_only
+    end
+
+    it "does not match when children-only attribute is absent" do
+      expect(plain_morph).not_to have_turbo_stream.with_action(:morph).children_only
+    end
+
+    it "chains with other constraints" do
+      expect(morph_stream).to have_turbo_stream.with_action(:morph).targeting("body").children_only
+    end
+
+    it "includes children only in constraint description" do
+      expect(have_turbo_stream.children_only.description).to include("children only")
+    end
+
+    it "shows ✗ children-only in constraint diff when absent" do
+      m = have_turbo_stream.with_action(:morph).children_only
+      m.matches?(plain_morph)
+      expect(m.failure_message).to include("✗ children-only")
+    end
+
+    it "shows ✓ children-only in constraint diff when present but other constraint fails" do
+      m = have_turbo_stream.with_action(:replace).children_only
+      m.matches?(morph_stream)
+      expect(m.failure_message).to include("✓ children-only")
+    end
+  end
+
+  describe "with_action validation" do
+    after { TurboRspec.reset_configuration! }
+
+    it "raises ArgumentError for unknown actions" do
+      expect { have_turbo_stream.with_action(:foobar) }
+        .to raise_error(ArgumentError, /Unknown Turbo stream action "foobar"/)
+    end
+
+    it "includes registration hint in the error" do
+      expect { have_turbo_stream.with_action(:foobar) }
+        .to raise_error(ArgumentError, /register_action/)
+    end
+
+    it "accepts built-in actions without error" do
+      TurboRspec::BUILTIN_ACTIONS.each do |action|
+        expect { have_turbo_stream.with_action(action) }.not_to raise_error
+      end
+    end
+
+    it "accepts registered custom actions" do
+      TurboRspec.register_action(:sparkle)
+      expect { have_turbo_stream.with_action(:sparkle) }.not_to raise_error
     end
   end
 

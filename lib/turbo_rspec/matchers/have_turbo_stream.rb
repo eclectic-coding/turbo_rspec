@@ -28,6 +28,8 @@ module TurboRspec
         @target_all = nil
         @content = nil
         @partial = nil
+        @attributes = {}
+        @children_only = false
         @expected_count = nil
         @count_type = :at_least
         @matching_count = 0
@@ -35,9 +37,15 @@ module TurboRspec
 
       # Constrains the match to streams with the given action.
       # @param action [Symbol, String] e.g. +:append+, +:replace+, +:remove+, +:refresh+, +:morph+
+      # @raise [ArgumentError] if the action is not a known built-in or registered custom action
       # @return [self]
       def with_action(action)
-        @action = action.to_s
+        action_str = action.to_s
+        unless TurboRspec.known_actions.include?(action_str)
+          raise ArgumentError, "Unknown Turbo stream action #{action_str.inspect}. " \
+            "Register custom actions with TurboRspec.register_action(:#{action_str})."
+        end
+        @action = action_str
         self
       end
 
@@ -70,6 +78,26 @@ module TurboRspec
       # @return [self]
       def rendering(partial)
         @partial = partial.to_s
+        self
+      end
+
+      # Constrains the match to streams that have all of the given HTML attributes.
+      # Keys and values are compared as strings.
+      # @param attrs [Hash]
+      # @return [self]
+      # @example
+      #   expect(response).to have_turbo_stream.with_attributes("data-controller" => "messages")
+      def with_attributes(attrs)
+        @attributes = attrs.transform_keys(&:to_s).transform_values(&:to_s)
+        self
+      end
+
+      # Constrains the match to morph streams with the +children-only+ attribute set.
+      # @return [self]
+      # @example
+      #   expect(response).to have_turbo_stream.with_action(:morph).children_only
+      def children_only
+        @children_only = true
         self
       end
 
@@ -167,7 +195,9 @@ module TurboRspec
           matches_target?(stream) &&
           matches_target_all?(stream) &&
           matches_content?(stream) &&
-          matches_partial?(stream)
+          matches_partial?(stream) &&
+          matches_attributes?(stream) &&
+          matches_children_only?(stream)
       end
 
       def matches_action?(stream)
@@ -192,6 +222,16 @@ module TurboRspec
         stream.to_html.include?(@partial)
       end
 
+      def matches_attributes?(stream)
+        return true if @attributes.empty?
+        @attributes.all? { |k, v| stream[k] == v }
+      end
+
+      def matches_children_only?(stream)
+        return true unless @children_only
+        !stream["children-only"].nil?
+      end
+
       def count_matches?(n)
         if @expected_count.nil?
           n >= 1
@@ -213,6 +253,8 @@ module TurboRspec
         parts << " targeting all #{@target_all.inspect}" if @target_all
         parts << " with content #{@content.inspect}" if @content
         parts << " rendering #{@partial.inspect}" if @partial
+        parts << " with attributes #{@attributes.inspect}" if @attributes.any?
+        parts << " children only" if @children_only
         parts.join
       end
 
@@ -261,11 +303,15 @@ module TurboRspec
         count += 1 if !@target_all.nil? && matches_target_all?(stream)
         count += 1 if !@content.nil? && matches_content?(stream)
         count += 1 if !@partial.nil? && matches_partial?(stream)
+        count += 1 if @attributes.any? && matches_attributes?(stream)
+        count += 1 if @children_only && matches_children_only?(stream)
         count
       end
 
       def constraint_count
-        [@action, @target, @target_all, @content, @partial].count { |c| !c.nil? }
+        [@action, @target, @target_all, @content, @partial].count { |c| !c.nil? } +
+          (@attributes.any? ? 1 : 0) +
+          (@children_only ? 1 : 0)
       end
 
       def constraint_diff(stream)
@@ -275,6 +321,11 @@ module TurboRspec
         lines << "  #{matches_target_all?(stream) ? "✓" : "✗"} targets:  expected #{@target_all.inspect}, got #{stream["targets"].inspect}" if @target_all
         lines << "  #{matches_content?(stream) ? "✓" : "✗"} content:  expected to include #{@content.inspect}, got #{stream.text.strip.slice(0, 50).inspect}" if @content
         lines << "  #{matches_partial?(stream) ? "✓" : "✗"} rendering: expected to include #{@partial.inspect}" if @partial
+        @attributes.each do |k, v|
+          actual = stream[k]
+          lines << "  #{actual == v ? "✓" : "✗"} attr[#{k}]: expected #{v.inspect}, got #{actual.inspect}"
+        end
+        lines << "  #{matches_children_only?(stream) ? "✓" : "✗"} children-only: expected attribute to be present" if @children_only
         lines
       end
     end
