@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.2.0] - 2026-06-01
+
 ### Added
 
 - `have_turbo_stream.with_attributes(hash)` — assert arbitrary HTML attributes on a stream element; accepts string or symbol keys

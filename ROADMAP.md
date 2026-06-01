@@ -4,12 +4,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 ---
 
-## 1.2 — Turbo 8 / morphing
-
-- **`with_attributes(hash)` chain** — generic attribute assertion for both `have_turbo_stream` and `have_turbo_frame`. Covers non-standard attributes (e.g., `data-*` passed through custom actions) without needing new named chains per attribute.
-- **Morph-aware assertions** — `morph` is a supported action but Turbo 8's `<turbo-stream action="morph">` has distinct semantics (`[children-only]` attribute). A `.children_only` chain on `have_turbo_stream` would make morph specs readable without raw attribute checks.
-- **Custom Turbo action support** — Turbo 8 allows registering custom stream actions. A `TurboRspec.register_action(:sparkle)` API would let teams assert their own actions without them being treated as unknown values.
-
 ## 1.3 — Stimulus companion
 
 - **Stimulus matchers** — `have_stimulus_controller`, `have_stimulus_action`, `have_stimulus_target` Capybara matchers. turbo-rails ships with Stimulus; teams using both already test Stimulus behavior manually. This is the natural next surface area for a complete Hotwire testing toolkit.
