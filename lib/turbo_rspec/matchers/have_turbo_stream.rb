@@ -28,6 +28,9 @@ module TurboRspec
         @target_all = nil
         @content = nil
         @partial = nil
+        @expected_count = nil
+        @count_type = :at_least
+        @matching_count = 0
       end
 
       # Constrains the match to streams with the given action.
@@ -70,12 +73,58 @@ module TurboRspec
         self
       end
 
+      # Asserts exactly one matching stream.
+      # @return [self]
+      def once
+        exactly(1)
+      end
+
+      # Asserts exactly two matching streams.
+      # @return [self]
+      def twice
+        exactly(2)
+      end
+
+      # Asserts exactly +n+ matching streams.
+      # @param n [Integer]
+      # @return [self]
+      def exactly(n)
+        @expected_count = n
+        @count_type = :exactly
+        self
+      end
+
+      # Asserts at least +n+ matching streams.
+      # @param n [Integer]
+      # @return [self]
+      def at_least(n)
+        @expected_count = n
+        @count_type = :at_least
+        self
+      end
+
+      # Asserts at most +n+ matching streams.
+      # @param n [Integer]
+      # @return [self]
+      def at_most(n)
+        @expected_count = n
+        @count_type = :at_most
+        self
+      end
+
+      # Fluent terminator so +.exactly(2).times+ reads naturally.
+      # @return [self]
+      def times
+        self
+      end
+
       # @param response_or_body [#body, String]
       # @return [Boolean]
       def matches?(response_or_body)
         @body = extract_body(response_or_body)
         @streams = parse_streams(@body)
-        @streams.any? { |stream| stream_matches?(stream) }
+        @matching_count = @streams.count { |stream| stream_matches?(stream) }
+        count_matches?(@matching_count)
       end
 
       # @param response_or_body [#body, String]
@@ -86,17 +135,17 @@ module TurboRspec
 
       # @return [String]
       def failure_message
-        "expected response to contain a turbo stream#{constraint_description}\n#{found_streams_message}"
+        "expected response to contain a turbo stream#{constraint_description}#{count_description}\n#{found_streams_message}"
       end
 
       # @return [String]
       def failure_message_when_negated
-        "expected response not to contain a turbo stream#{constraint_description}"
+        "expected response not to contain a turbo stream#{constraint_description}#{count_description}"
       end
 
       # @return [String]
       def description
-        "have turbo stream#{constraint_description}"
+        "have turbo stream#{constraint_description}#{count_description}"
       end
 
       private
@@ -143,6 +192,20 @@ module TurboRspec
         stream.to_html.include?(@partial)
       end
 
+      def count_matches?(n)
+        if @expected_count.nil?
+          n >= 1
+        else
+          # :nocov:
+          case @count_type
+          # :nocov:
+          when :exactly then n == @expected_count
+          when :at_least then n >= @expected_count
+          when :at_most then n <= @expected_count
+          end
+        end
+      end
+
       def constraint_description
         parts = []
         parts << " with action #{@action.inspect}" if @action
@@ -151,6 +214,17 @@ module TurboRspec
         parts << " with content #{@content.inspect}" if @content
         parts << " rendering #{@partial.inspect}" if @partial
         parts.join
+      end
+
+      def count_description
+        return "" if @expected_count.nil?
+        # :nocov:
+        case @count_type
+        # :nocov:
+        when :exactly then " exactly #{@expected_count} time(s)"
+        when :at_least then " at least #{@expected_count} time(s)"
+        when :at_most then " at most #{@expected_count} time(s)"
+        end
       end
 
       def found_streams_message
@@ -163,10 +237,15 @@ module TurboRspec
           lines << "  #{i + 1}. action=#{s["action"].inspect} target=#{s["target"].inspect} content=#{content_preview}"
         end
 
-        closest = closest_match
-        lines << ""
-        lines << "closest match (#{count_matching_constraints(closest)}/#{constraint_count} constraint(s) matched):"
-        lines.concat(constraint_diff(closest))
+        if @expected_count
+          lines << ""
+          lines << "#{@matching_count} of #{@streams.size} stream(s) matched the constraints"
+        else
+          closest = closest_match
+          lines << ""
+          lines << "closest match (#{count_matching_constraints(closest)}/#{constraint_count} constraint(s) matched):"
+          lines.concat(constraint_diff(closest))
+        end
 
         lines.join("\n")
       end
