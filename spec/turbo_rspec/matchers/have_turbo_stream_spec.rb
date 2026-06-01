@@ -224,7 +224,7 @@ RSpec.describe TurboRspec::Matchers::HaveTurboStream do
 
   describe "children_only" do
     let(:morph_stream) { '<turbo-stream action="morph" target="body" children-only><template><p>Hi</p></template></turbo-stream>' }
-    let(:plain_morph)  { '<turbo-stream action="morph" target="body"><template><p>Hi</p></template></turbo-stream>' }
+    let(:plain_morph) { '<turbo-stream action="morph" target="body"><template><p>Hi</p></template></turbo-stream>' }
 
     it "matches a morph stream with children-only attribute" do
       expect(morph_stream).to have_turbo_stream.with_action(:morph).children_only
