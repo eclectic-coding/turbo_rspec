@@ -99,6 +99,12 @@ expect(response).to have_turbo_stream
   .targeting("messages")
   .with_content("Hello")
 
+# With arbitrary attributes
+expect(response).to have_turbo_stream.with_attributes("data-controller" => "messages")
+
+# Turbo 8 morph with children-only
+expect(response).to have_turbo_stream.with_action(:morph).children_only
+
 # Count qualifiers — assert how many matching streams appear
 expect(response).to have_turbo_stream.with_action(:append).once
 expect(response).to have_turbo_stream.with_action(:append).twice
@@ -112,7 +118,14 @@ expect(response).not_to have_turbo_stream.with_action(:replace)
 
 #### Actions
 
-Turbo supports the following stream actions: `append`, `prepend`, `replace`, `update`, `remove`, `before`, `after`, `refresh`.
+Turbo's built-in stream actions: `append`, `prepend`, `replace`, `update`, `remove`, `before`, `after`, `refresh`, `morph`.
+
+`with_action` raises `ArgumentError` for unrecognised names. Register custom actions in your test setup:
+
+```ruby
+# spec/support/turbo_rspec.rb
+TurboRspec.register_action(:sparkle, :highlight)
+```
 
 ### `have_turbo_streams`
 
@@ -201,6 +214,9 @@ expect(page).to have_turbo_frame("messages").lazy
 
 # With src — assert the src attribute on a lazy-loaded frame
 expect(page).to have_turbo_frame("messages").with_src("/messages/new")
+
+# With arbitrary attributes (request specs only — use Capybara selectors in system specs)
+expect(response).to have_turbo_frame.with_attributes("data-controller" => "chat")
 
 # Chained
 expect(page).to have_turbo_frame("messages").lazy.with_src("/messages/new")

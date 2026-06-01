@@ -19,6 +19,9 @@ module TurboRspec
   # Base error class for TurboRspec.
   class Error < StandardError; end
 
+  # Built-in Turbo stream action names.
+  BUILTIN_ACTIONS = %w[append prepend replace update remove before after refresh morph].freeze
+
   class << self
     # Yields the configuration object for customization.
     #
@@ -44,6 +47,24 @@ module TurboRspec
     # @return [void]
     def reset_configuration!
       @configuration = Configuration.new
+    end
+
+    # Registers one or more custom Turbo stream action names so that
+    # +have_turbo_stream.with_action(:name)+ does not raise +ArgumentError+.
+    #
+    # @param actions [Array<Symbol, String>]
+    # @return [void]
+    # @example
+    #   TurboRspec.register_action(:sparkle, :highlight)
+    def register_action(*actions)
+      configuration.custom_actions |= actions.map(&:to_s)
+    end
+
+    # Returns all known stream action names (built-in + registered custom).
+    #
+    # @return [Array<String>]
+    def known_actions
+      BUILTIN_ACTIONS + configuration.custom_actions
     end
 
     # Installs RSpec integration — includes matchers and helpers into the
