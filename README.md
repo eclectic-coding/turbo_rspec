@@ -99,6 +99,13 @@ expect(response).to have_turbo_stream
   .targeting("messages")
   .with_content("Hello")
 
+# Count qualifiers — assert how many matching streams appear
+expect(response).to have_turbo_stream.with_action(:append).once
+expect(response).to have_turbo_stream.with_action(:append).twice
+expect(response).to have_turbo_stream.with_action(:append).exactly(3).times
+expect(response).to have_turbo_stream.with_action(:append).at_least(2).times
+expect(response).to have_turbo_stream.with_action(:append).at_most(1).times
+
 # Negation
 expect(response).not_to have_turbo_stream.with_action(:replace)
 ```
@@ -188,6 +195,15 @@ expect(page).to have_turbo_frame("messages").with_content("Hello")
 
 # Loaded (frame finished loading)
 expect(page).to have_turbo_frame("messages").loaded
+
+# Lazy frame — assert loading="lazy" attribute
+expect(page).to have_turbo_frame("messages").lazy
+
+# With src — assert the src attribute on a lazy-loaded frame
+expect(page).to have_turbo_frame("messages").with_src("/messages/new")
+
+# Chained
+expect(page).to have_turbo_frame("messages").lazy.with_src("/messages/new")
 
 # Negation
 expect(page).not_to have_turbo_frame("notifications")

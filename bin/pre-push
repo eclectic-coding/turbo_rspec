@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Pre-push hook: checks that docs are updated before pushing a feature branch.
+# Install: bin/setup (symlinks this file to .git/hooks/pre-push)
+set -euo pipefail
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Release commits on main are handled by bin/release — skip the check.
+if [[ "$BRANCH" == "main" ]]; then
+  exit 0
+fi
+
+# Determine the range of commits being pushed.
+REMOTE_BRANCH="origin/$BRANCH"
+if git rev-parse --verify "$REMOTE_BRANCH" >/dev/null 2>&1; then
+  RANGE="$REMOTE_BRANCH..HEAD"
+else
+  RANGE="origin/main..HEAD"
+fi
+
+CHANGED=$(git diff --name-only "$RANGE" 2>/dev/null || true)
+
+warn() { echo "  ⚠  $*" >&2; }
+ok()   { echo "  ✓  $*" >&2; }
+
+echo "==> Docs check ($BRANCH)..." >&2
+FAIL=0
+
+# CHANGELOG — required when lib/ files changed (user-facing work).
+if echo "$CHANGED" | grep -q "^lib/"; then
+  if echo "$CHANGED" | grep -q "^CHANGELOG\.md$"; then
+    ok "CHANGELOG.md updated"
+  else
+    warn "CHANGELOG.md not updated — add an entry under ## [Unreleased]"
+    FAIL=1
+  fi
+fi
+
+# README — advisory when lib/ files changed.
+if echo "$CHANGED" | grep -q "^README\.md$"; then
+  ok "README.md updated"
+elif echo "$CHANGED" | grep -q "^lib/"; then
+  warn "README.md not updated — consider documenting any new or changed API"
+fi
+
+# ROADMAP — advisory when completing planned work.
+if echo "$CHANGED" | grep -q "^ROADMAP\.md$"; then
+  ok "ROADMAP.md updated"
+else
+  warn "ROADMAP.md not updated — consider removing any shipped items"
+fi
+
+if [[ "$FAIL" -eq 1 ]]; then
+  echo "" >&2
+  echo "Push blocked. Fix the issue above, then push again." >&2
+  echo "To skip this check: git push --no-verify" >&2
+  exit 1
+fi
