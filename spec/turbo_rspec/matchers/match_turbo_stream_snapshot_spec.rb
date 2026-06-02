@@ -66,12 +66,36 @@ RSpec.describe TurboRspec::Matchers::MatchTurboStreamSnapshot do
   end
 
   describe "failure messages" do
-    it "shows stored and actual content on mismatch" do
+    it "shows an inline diff on mismatch" do
       expect(stream).to match_turbo_stream_snapshot("messages/new")
       m = match_turbo_stream_snapshot("messages/new")
       m.matches?(other_stream)
-      expect(m.failure_message).to include("stored").and include("actual")
+      expect(m.failure_message).to include("diff (stored → actual)")
+      expect(m.failure_message).to include("- ")
+      expect(m.failure_message).to include("+ ")
       expect(m.failure_message).to include("UPDATE_TURBO_SNAPSHOTS")
+    end
+
+    it "shows a removal line for stored content" do
+      expect(stream).to match_turbo_stream_snapshot("messages/new")
+      m = match_turbo_stream_snapshot("messages/new")
+      m.matches?(other_stream)
+      expect(m.failure_message).to include('- <turbo-stream action="append"')
+    end
+
+    it "shows an addition line for actual content" do
+      expect(stream).to match_turbo_stream_snapshot("messages/new")
+      m = match_turbo_stream_snapshot("messages/new")
+      m.matches?(other_stream)
+      expect(m.failure_message).to include('+ <turbo-stream action="replace"')
+    end
+
+    it "shows a whitespace-only message when strings differ only in whitespace" do
+      padded = "  #{stream}  "
+      expect(stream).to match_turbo_stream_snapshot("messages/new")
+      m = match_turbo_stream_snapshot("messages/new")
+      m.matches?(padded)
+      expect(m.failure_message).to include("whitespace only")
     end
 
     it "provides negated failure message" do
