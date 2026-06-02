@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.6.0] - 2026-06-02
+
 ### Added
 
 - `have_stimulus_controller`, `have_stimulus_action`, `have_stimulus_target` request-spec matchers — assert Stimulus `data-*` attributes in response HTML, auto-included in `type: :request` and `type: :controller` example groups

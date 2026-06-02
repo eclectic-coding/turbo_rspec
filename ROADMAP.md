@@ -2,11 +2,6 @@
 
 RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Streams, Turbo Frames, and ActionCable broadcasts. The goal is to replace the hand-rolled helpers that every Rails/Turbo project accumulates.
 
-## 1.6 — Minitest & Turbo 8 extensions
-
-
----
-
 ## Guiding principles
 
 - **Zero magic by default.** Auto-include only when it's unambiguous (Rails request specs). Everything else is opt-in.
