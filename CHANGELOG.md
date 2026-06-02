@@ -2,6 +2,7 @@
 
 ### Added
 
+- `assert_broadcasted_turbo_stream_to` and `refute_broadcasted_turbo_stream_to` in `TurboRspec::Assertions` — Minitest broadcast parity with the RSpec `have_broadcasted_turbo_stream_to` matcher
 - `have_turbo_frame` (Capybara) `.eager` chain — asserts `loading="eager"` on the frame (Turbo 8)
 - `have_turbo_frame` (Capybara) `.strict` chain — asserts the `[strict]` boolean attribute on the frame (Turbo 8)
 

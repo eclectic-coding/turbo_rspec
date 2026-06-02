@@ -105,4 +105,111 @@ RSpec.describe TurboRspec::Assertions do
       expect { test_case.refute_turbo_frame(frame, message: "oops") }.to raise_error("oops")
     end
   end
+
+  describe "#assert_broadcasted_turbo_stream_to" do
+    before { ActionCable.server.pubsub.clear }
+
+    def broadcast(stream_name, html)
+      ActionCable.server.broadcast(stream_name, html)
+    end
+
+    def turbo_stream_html(action: "append", target: "list")
+      "<turbo-stream action=\"#{action}\" target=\"#{target}\"><template></template></turbo-stream>"
+    end
+
+    it "passes when a matching broadcast is made" do
+      expect {
+        test_case.assert_broadcasted_turbo_stream_to("notifications") do
+          broadcast("notifications", turbo_stream_html)
+        end
+      }.not_to raise_error
+    end
+
+    it "raises when no broadcast is made" do
+      expect {
+        test_case.assert_broadcasted_turbo_stream_to("notifications") { nil }
+      }.to raise_error(/notifications/)
+    end
+
+    it "supports action constraint" do
+      expect {
+        test_case.assert_broadcasted_turbo_stream_to("notifications", action: :replace) do
+          broadcast("notifications", turbo_stream_html(action: "append"))
+        end
+      }.to raise_error(/replace/)
+    end
+
+    it "supports target constraint" do
+      expect {
+        test_case.assert_broadcasted_turbo_stream_to("notifications", target: "messages") do
+          broadcast("notifications", turbo_stream_html)
+        end
+      }.to raise_error(/messages/)
+    end
+
+    it "supports targets constraint" do
+      expect {
+        test_case.assert_broadcasted_turbo_stream_to("notifications", targets: ".items") do
+          broadcast("notifications", turbo_stream_html)
+        end
+      }.to raise_error(/.items/)
+    end
+
+    it "supports content constraint" do
+      html = '<turbo-stream action="append" target="list"><template>Hello</template></turbo-stream>'
+      expect {
+        test_case.assert_broadcasted_turbo_stream_to("notifications", content: "Bye") do
+          broadcast("notifications", html)
+        end
+      }.to raise_error(/Bye/)
+    end
+
+    it "supports partial constraint" do
+      expect {
+        test_case.assert_broadcasted_turbo_stream_to("notifications", partial: "_item.html.erb") do
+          broadcast("notifications", turbo_stream_html)
+        end
+      }.to raise_error(/_item.html.erb/)
+    end
+
+    it "uses custom message when provided" do
+      expect {
+        test_case.assert_broadcasted_turbo_stream_to("notifications", message: "oops") { nil }
+      }.to raise_error("oops")
+    end
+  end
+
+  describe "#refute_broadcasted_turbo_stream_to" do
+    before { ActionCable.server.pubsub.clear }
+
+    def broadcast(stream_name, html)
+      ActionCable.server.broadcast(stream_name, html)
+    end
+
+    def turbo_stream_html
+      '<turbo-stream action="append" target="list"><template></template></turbo-stream>'
+    end
+
+    it "passes when no broadcast is made" do
+      expect {
+        test_case.refute_broadcasted_turbo_stream_to("notifications") { nil }
+      }.not_to raise_error
+    end
+
+    it "raises when a matching broadcast is found" do
+      expect {
+        test_case.refute_broadcasted_turbo_stream_to("notifications") do
+          broadcast("notifications", turbo_stream_html)
+        end
+      }.to raise_error(/not/)
+    end
+
+    it "uses custom message when provided" do
+      expect {
+        test_case.refute_broadcasted_turbo_stream_to("notifications", message: "oops") do
+          broadcast("notifications", turbo_stream_html)
+        end
+      }.to raise_error("oops")
+    end
+  end
 end
