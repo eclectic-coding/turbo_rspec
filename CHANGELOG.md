@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+### Added
+
+- `have_turbo_frame` (Capybara) `.eager` chain — asserts `loading="eager"` on the frame (Turbo 8)
+- `have_turbo_frame` (Capybara) `.strict` chain — asserts the `[strict]` boolean attribute on the frame (Turbo 8)
+
 ## [1.5.0] - 2026-06-02
 
 ### Added

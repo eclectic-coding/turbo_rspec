@@ -10,6 +10,8 @@ module TurboRspec
           @loaded = false
           @src = nil
           @lazy = false
+          @eager = false
+          @strict = false
         end
 
         def with_content(text)
@@ -37,11 +39,27 @@ module TurboRspec
           self
         end
 
+        # Constrains the match to frames with +loading="eager"+.
+        # @return [self]
+        def eager
+          @eager = true
+          self
+        end
+
+        # Constrains the match to frames with the +[strict]+ attribute (Turbo 8).
+        # @return [self]
+        def strict
+          @strict = true
+          self
+        end
+
         def matches?(page_or_node)
           @node = find_frame(page_or_node)
           return false unless @node
           return false if @loaded && !@node[:complete]
           return false if @lazy && @node[:loading] != "lazy"
+          return false if @eager && @node[:loading] != "eager"
+          return false if @strict && @node[:strict].nil?
           return false if @src && @node[:src] != @src
           return false if @content && !@node.has_content?(@content, wait: 0)
           true
@@ -58,6 +76,10 @@ module TurboRspec
             "expected turbo-frame##{@id} to be loaded (missing [complete] attribute)"
           elsif @lazy && @node[:loading] != "lazy"
             "expected turbo-frame##{@id} to be lazy (missing loading=\"lazy\" attribute)"
+          elsif @eager && @node[:loading] != "eager"
+            "expected turbo-frame##{@id} to be eager (missing loading=\"eager\" attribute)"
+          elsif @strict && @node[:strict].nil?
+            "expected turbo-frame##{@id} to be strict (missing [strict] attribute)"
           elsif @src && @node[:src] != @src
             "expected turbo-frame##{@id} to have src #{@src.inspect}, got #{@node[:src].inspect}"
           else
@@ -85,6 +107,8 @@ module TurboRspec
           parts = []
           parts << " loaded" if @loaded
           parts << " lazy" if @lazy
+          parts << " eager" if @eager
+          parts << " strict" if @strict
           parts << " with src #{@src.inspect}" if @src
           parts << " with content #{@content.inspect}" if @content
           parts.join

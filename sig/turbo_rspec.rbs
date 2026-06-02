@@ -153,6 +153,8 @@ module TurboRspec
         def loaded: () -> self
         def with_src: (String url) -> self
         def lazy: () -> self
+        def eager: () -> self
+        def strict: () -> self
 
         # Capybara matcher interface
         def matches?: (untyped page_or_node) -> bool
