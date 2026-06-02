@@ -85,6 +85,8 @@ module TurboRspec
       def targeting_all: (String selector) -> self
       def with_content: (String text) -> self
       def rendering: (String partial) -> self
+      def with_attributes: (Hash[String | Symbol, untyped] attrs) -> self
+      def children_only: () -> self
 
       # Count qualifiers
       def once: () -> self

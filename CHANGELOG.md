@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+### Added
+
+- `have_broadcasted_turbo_stream_to` now validates action names via `TurboRspec.known_actions`, raising `ArgumentError` for unrecognised actions — consistent with `have_turbo_stream`
+- `have_broadcasted_turbo_stream_to.with_attributes(hash)` — assert arbitrary HTML attributes on broadcast stream elements
+- `have_broadcasted_turbo_stream_to.children_only` — assert the `[children-only]` attribute on morph broadcasts
+
 ## [1.4.0] - 2026-06-02
 
 ### Added
