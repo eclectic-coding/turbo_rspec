@@ -220,6 +220,12 @@ expect(page).to have_turbo_frame("messages").loaded
 # Lazy frame — assert loading="lazy" attribute
 expect(page).to have_turbo_frame("messages").lazy
 
+# Eager frame — assert loading="eager" attribute (Turbo 8)
+expect(page).to have_turbo_frame("messages").eager
+
+# Strict frame — assert [strict] attribute (Turbo 8)
+expect(page).to have_turbo_frame("messages").strict
+
 # With src — assert the src attribute on a lazy-loaded frame
 expect(page).to have_turbo_frame("messages").with_src("/messages/new")
 

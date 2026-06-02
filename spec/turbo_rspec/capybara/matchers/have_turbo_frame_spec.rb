@@ -9,9 +9,10 @@ RSpec.describe TurboRspec::Capybara::Matchers::HaveTurboFrame do
     ::Capybara.string(html)
   end
 
-  def turbo_frame(id: "my-frame", content: nil, complete: false, src: nil, loading: nil)
+  def turbo_frame(id: "my-frame", content: nil, complete: false, src: nil, loading: nil, strict: nil)
     attrs = complete ? ' complete="complete"' : ""
     attrs += " src=\"#{src}\"" if src
+    attrs += " strict=\"#{strict}\"" unless strict.nil?
     attrs += " loading=\"#{loading}\"" if loading
     inner = content || ""
     "<turbo-frame id=\"#{id}\"#{attrs}>#{inner}</turbo-frame>"
@@ -75,6 +76,31 @@ RSpec.describe TurboRspec::Capybara::Matchers::HaveTurboFrame do
       expect(page_with(turbo_frame(src: "/partial", loading: "lazy")))
         .to have_turbo_frame("my-frame").lazy.with_src("/partial")
     end
+
+    it "matches eager frame" do
+      expect(page_with(turbo_frame(loading: "eager"))).to have_turbo_frame("my-frame").eager
+    end
+
+    it "does not match eager when loading attribute is absent" do
+      expect(page_with(turbo_frame)).not_to have_turbo_frame("my-frame").eager
+    end
+
+    it "does not match eager when loading is lazy" do
+      expect(page_with(turbo_frame(loading: "lazy"))).not_to have_turbo_frame("my-frame").eager
+    end
+
+    it "matches strict frame" do
+      expect(page_with(turbo_frame(strict: ""))).to have_turbo_frame("my-frame").strict
+    end
+
+    it "does not match strict when strict attribute is absent" do
+      expect(page_with(turbo_frame)).not_to have_turbo_frame("my-frame").strict
+    end
+
+    it "chains eager and strict" do
+      expect(page_with(turbo_frame(loading: "eager", strict: "")))
+        .to have_turbo_frame("my-frame").eager.strict
+    end
   end
 
   describe "failure messages" do
@@ -112,6 +138,18 @@ RSpec.describe TurboRspec::Capybara::Matchers::HaveTurboFrame do
       matcher.matches?(page_with(turbo_frame))
       expect(matcher.failure_message).to include("lazy")
     end
+
+    it "describes missing eager attribute" do
+      matcher = have_turbo_frame("my-frame").eager
+      matcher.matches?(page_with(turbo_frame))
+      expect(matcher.failure_message).to include("eager")
+    end
+
+    it "describes missing strict attribute" do
+      matcher = have_turbo_frame("my-frame").strict
+      matcher.matches?(page_with(turbo_frame))
+      expect(matcher.failure_message).to include("strict")
+    end
   end
 
   describe "#description" do
@@ -125,6 +163,14 @@ RSpec.describe TurboRspec::Capybara::Matchers::HaveTurboFrame do
 
     it "includes lazy constraint" do
       expect(have_turbo_frame("my-frame").lazy.description).to include("lazy")
+    end
+
+    it "includes eager constraint" do
+      expect(have_turbo_frame("my-frame").eager.description).to include("eager")
+    end
+
+    it "includes strict constraint" do
+      expect(have_turbo_frame("my-frame").strict.description).to include("strict")
     end
 
     it "includes src constraint" do
