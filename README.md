@@ -11,7 +11,7 @@ Drop-in test matchers for [hotwired/turbo-rails](https://github.com/hotwired/tur
 - **Request/controller specs** — `have_turbo_stream`, `have_turbo_frame`, `have_turbo_streams`
 - **Broadcast specs** — `have_broadcasted_turbo_stream_to` with count qualifiers
 - **System/feature specs** — Capybara matchers: `have_turbo_frame`, `have_turbo_stream_tag`, `within_turbo_frame`, `have_stimulus_controller`, `have_stimulus_action`, `have_stimulus_target`
-- **Minitest** — `assert_turbo_stream`, `refute_turbo_stream`, `assert_turbo_frame`, `refute_turbo_frame`
+- **Minitest** — `assert_turbo_stream`, `refute_turbo_stream`, `assert_turbo_frame`, `refute_turbo_frame`, `assert_broadcasted_turbo_stream_to`, `refute_broadcasted_turbo_stream_to`
 - **Factory helpers** — `turbo_stream_html`, `turbo_frame_html`
 - **Shared examples** — `it_behaves_like "a turbo stream response"`
 - **Auto-included** — zero setup required when `turbo-rails` is in your bundle
@@ -436,6 +436,11 @@ refute_turbo_frame(response, id: "notifications")
 
 # Custom failure message
 assert_turbo_stream(response, action: :append, message: "expected append stream")
+
+# Broadcast assertions (requires ActionCable test adapter)
+assert_broadcasted_turbo_stream_to("notifications") { MyJob.perform_now }
+assert_broadcasted_turbo_stream_to("notifications", action: :append, target: "messages") { MyJob.perform_now }
+refute_broadcasted_turbo_stream_to("notifications") { MyJob.perform_now }
 ```
 
 ## Contributing

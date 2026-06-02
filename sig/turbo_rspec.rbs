@@ -130,6 +130,8 @@ module TurboRspec
   end
 
   module Assertions
+    def assert_broadcasted_turbo_stream_to: (String stream, ?action: (Symbol | String)?, ?target: String?, ?targets: String?, ?content: String?, ?partial: String?, ?message: String?) { () -> void } -> void
+    def refute_broadcasted_turbo_stream_to: (String stream, ?action: (Symbol | String)?, ?target: String?, ?targets: String?, ?content: String?, ?partial: String?, ?message: String?) { () -> void } -> void
     def assert_turbo_stream: (untyped response_or_body, ?action: (Symbol | String)?, ?target: String?, ?targets: String?, ?content: String?, ?partial: String?, ?message: String?) -> void
     def refute_turbo_stream: (untyped response_or_body, ?action: (Symbol | String)?, ?target: String?, ?targets: String?, ?content: String?, ?partial: String?, ?message: String?) -> void
     def assert_turbo_frame: (untyped response_or_body, ?id: String?, ?content: String?, ?partial: String?, ?message: String?) -> void
