@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+### Added
+
+- `match_turbo_stream_snapshot(name)` — records the turbo stream response on the first run and diffs against it on subsequent runs; set `UPDATE_TURBO_SNAPSHOTS=1` to overwrite
+- `TurboRspec::Cop::UseHaveTurboStream` RuboCop cop — flags `expect(response.body).to include("<turbo-stream")` and similar raw-body patterns; load via `require "turbo_rspec/rubocop"` in `.rubocop.yml`
+- `TurboRspec.configuration.snapshot_dir` — configure snapshot storage path (default: `spec/snapshots/turbo`)
+
 ## [1.3.0] - 2026-06-02
 
 ### Added

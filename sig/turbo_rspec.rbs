@@ -17,6 +17,7 @@ module TurboRspec
   class Configuration
     attr_accessor auto_include: bool
     attr_accessor custom_actions: Array[String]
+    attr_accessor snapshot_dir: String
 
     def initialize: () -> void
   end
@@ -25,6 +26,7 @@ module TurboRspec
     def have_turbo_stream: () -> HaveTurboStream
     def assert_no_turbo_stream: () -> HaveTurboStream
     def have_turbo_streams: (*HaveTurboStream matchers) -> HaveTurboStreams
+    def match_turbo_stream_snapshot: (String name) -> MatchTurboStreamSnapshot
     def have_turbo_frame: () -> HaveTurboFrame
     def have_broadcasted_turbo_stream_to: (String | untyped stream_or_object) -> HaveBroadcastedTurboStreamTo
     def broadcast_turbo_stream_to: (String | untyped stream_or_object) -> HaveBroadcastedTurboStreamTo
@@ -96,6 +98,15 @@ module TurboRspec
       def supports_block_expectations?: () -> bool
       def matches?: (untyped block) -> bool
       def does_not_match?: (untyped block) -> bool
+      def failure_message: () -> String
+      def failure_message_when_negated: () -> String
+      def description: () -> String
+    end
+
+    class MatchTurboStreamSnapshot
+      def initialize: (String name) -> void
+      def matches?: (untyped response_or_body) -> bool
+      def does_not_match?: (untyped response_or_body) -> bool
       def failure_message: () -> String
       def failure_message_when_negated: () -> String
       def description: () -> String
@@ -183,6 +194,17 @@ module TurboRspec
         def failure_message: () -> String
         def failure_message_when_negated: () -> String
         def description: () -> String
+      end
+    end
+  end
+end
+
+module RuboCop
+  module Cop
+    module TurboRspec
+      class UseHaveTurboStream < Base
+        MSG: String
+        RESTRICT_ON_SEND: Array[Symbol]
       end
     end
   end

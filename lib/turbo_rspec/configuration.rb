@@ -18,9 +18,16 @@ module TurboRspec
     #   @return [Array<String>]
     attr_accessor :custom_actions
 
+    # @!attribute [rw] snapshot_dir
+    #   Directory where turbo stream snapshots are stored.
+    #   Defaults to +"spec/snapshots/turbo"+.
+    #   @return [String]
+    attr_accessor :snapshot_dir
+
     def initialize
       @auto_include = true
       @custom_actions = []
+      @snapshot_dir = "spec/snapshots/turbo"
     end
   end
 end
