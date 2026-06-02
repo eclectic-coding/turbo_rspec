@@ -4,13 +4,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 ---
 
-## 1.4 — Tooling
-
-- **RuboCop cop** — flag request specs that assert `response.body` with a raw string match or `include "<turbo-stream"` instead of using the gem's matchers. Useful for migration and incremental adoption.
-- **Snapshot/fixture matcher** — `match_turbo_stream_snapshot("name")` records the stream on the first run and diffs on subsequent runs. Good for complex multi-stream responses where re-specifying every constraint in detail is noisy.
-
----
-
 ## Guiding principles
 
 - **Zero magic by default.** Auto-include only when it's unambiguous (Rails request specs). Everything else is opt-in.

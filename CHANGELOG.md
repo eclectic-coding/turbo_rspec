@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.4.0] - 2026-06-02
+
 ### Added
 
 - `match_turbo_stream_snapshot(name)` — records the turbo stream response on the first run and diffs against it on subsequent runs; set `UPDATE_TURBO_SNAPSHOTS=1` to overwrite
