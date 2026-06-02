@@ -445,7 +445,7 @@ refute_broadcasted_turbo_stream_to("notifications") { MyJob.perform_now }
 
 ## Contributing
 
-Bug reports and pull requests are welcome on [GitHub](https://github.com/eclectic-coding/turbo_rspec).
+Bug reports and pull requests are welcome on [GitHub](https://github.com/eclectic-coding/turbo_rspec). See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions, branch conventions, CHANGELOG requirements, and the PR checklist.
 
 ## License
 
