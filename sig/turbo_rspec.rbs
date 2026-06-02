@@ -26,6 +26,9 @@ module TurboRspec
     def have_turbo_stream: () -> HaveTurboStream
     def assert_no_turbo_stream: () -> HaveTurboStream
     def have_turbo_streams: (*HaveTurboStream matchers) -> HaveTurboStreams
+    def have_stimulus_controller: (String controller_name) -> HaveStimulusController
+    def have_stimulus_action: (String action_descriptor) -> HaveStimulusAction
+    def have_stimulus_target: (String controller_name, String target_name) -> HaveStimulusTarget
     def match_turbo_stream_snapshot: (String name) -> MatchTurboStreamSnapshot
     def have_turbo_frame: () -> HaveTurboFrame
     def have_broadcasted_turbo_stream_to: (String | untyped stream_or_object) -> HaveBroadcastedTurboStreamTo
@@ -100,6 +103,33 @@ module TurboRspec
       def supports_block_expectations?: () -> bool
       def matches?: (untyped block) -> bool
       def does_not_match?: (untyped block) -> bool
+      def failure_message: () -> String
+      def failure_message_when_negated: () -> String
+      def description: () -> String
+    end
+
+    class HaveStimulusController
+      def initialize: (String controller_name) -> void
+      def matches?: (untyped response_or_body) -> bool
+      def does_not_match?: (untyped response_or_body) -> bool
+      def failure_message: () -> String
+      def failure_message_when_negated: () -> String
+      def description: () -> String
+    end
+
+    class HaveStimulusAction
+      def initialize: (String action_descriptor) -> void
+      def matches?: (untyped response_or_body) -> bool
+      def does_not_match?: (untyped response_or_body) -> bool
+      def failure_message: () -> String
+      def failure_message_when_negated: () -> String
+      def description: () -> String
+    end
+
+    class HaveStimulusTarget
+      def initialize: (String controller_name, String target_name) -> void
+      def matches?: (untyped response_or_body) -> bool
+      def does_not_match?: (untyped response_or_body) -> bool
       def failure_message: () -> String
       def failure_message_when_negated: () -> String
       def description: () -> String
