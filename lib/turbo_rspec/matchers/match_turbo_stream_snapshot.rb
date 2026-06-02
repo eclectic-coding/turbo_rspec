@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "fileutils"
+require "diff/lcs"
 
 module TurboRspec
   module Matchers
@@ -44,8 +45,7 @@ module TurboRspec
       # @return [String]
       def failure_message
         "expected response to match turbo stream snapshot #{@name.inspect}\n\n" \
-          "stored:\n#{@stored}\n\n" \
-          "actual:\n#{@actual}\n\n" \
+          "diff (stored → actual):\n#{inline_diff}\n\n" \
           "To update: run with UPDATE_TURBO_SNAPSHOTS=1"
       end
 
@@ -80,6 +80,22 @@ module TurboRspec
 
       def update_snapshots?
         ENV["UPDATE_TURBO_SNAPSHOTS"] == "1"
+      end
+
+      def inline_diff
+        stored_lines = @stored.strip.lines
+        actual_lines = @actual.strip.lines
+        hunks = Diff::LCS.diff(stored_lines, actual_lines)
+        return "  (no textual difference — whitespace only?)" if hunks.empty?
+
+        lines = []
+        hunks.each do |hunk|
+          hunk.each do |change|
+            prefix = (change.action == "+") ? "+" : "-"
+            lines << "#{prefix} #{change.element.chomp}"
+          end
+        end
+        lines.join("\n")
       end
     end
   end

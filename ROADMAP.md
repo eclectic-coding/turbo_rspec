@@ -2,10 +2,6 @@
 
 RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Streams, Turbo Frames, and ActionCable broadcasts. The goal is to replace the hand-rolled helpers that every Rails/Turbo project accumulates.
 
-## 1.5 — Broadcast parity & DX
-
-- **Snapshot inline diff** — `match_turbo_stream_snapshot` currently dumps raw before/after strings on mismatch; a line-by-line diff makes it far easier to spot what changed.
-
 ## 1.6 — Minitest & Turbo 8 extensions
 
 - **`assert_broadcasted_turbo_stream_to` / `refute_broadcasted_turbo_stream_to`** — `TurboRspec::Assertions` covers request-spec stream and frame assertions but has no broadcast counterpart. Teams using Minitest with ActionCable have no parity with the RSpec broadcast matcher.
