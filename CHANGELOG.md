@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.3.0] - 2026-06-02
+
 ### Added
 
 - `have_stimulus_controller(name)` — Capybara matcher asserting `data-controller` contains the given controller name

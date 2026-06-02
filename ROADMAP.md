@@ -4,10 +4,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 ---
 
-## 1.3 — Stimulus companion
-
-- **Stimulus matchers** — `have_stimulus_controller`, `have_stimulus_action`, `have_stimulus_target` Capybara matchers. turbo-rails ships with Stimulus; teams using both already test Stimulus behavior manually. This is the natural next surface area for a complete Hotwire testing toolkit.
-
 ## 1.4 — Tooling
 
 - **RuboCop cop** — flag request specs that assert `response.body` with a raw string match or `include "<turbo-stream"` instead of using the gem's matchers. Useful for migration and incremental adoption.
