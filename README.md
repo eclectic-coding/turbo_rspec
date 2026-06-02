@@ -183,6 +183,14 @@ expect { MyJob.perform_now }.to have_broadcasted_turbo_stream_to("notifications"
   .targeting("messages")
   .with_content("Hello")
 
+# With arbitrary attributes
+expect { MyJob.perform_now }.to have_broadcasted_turbo_stream_to("notifications")
+  .with_attributes("data-controller" => "messages")
+
+# Turbo 8 morph with children-only
+expect { MyJob.perform_now }.to have_broadcasted_turbo_stream_to("body")
+  .with_action(:morph).children_only
+
 # Count qualifiers
 expect { MyJob.perform_now }.to have_broadcasted_turbo_stream_to("notifications").once
 expect { MyJob.perform_now }.to have_broadcasted_turbo_stream_to("notifications").exactly(3).times
