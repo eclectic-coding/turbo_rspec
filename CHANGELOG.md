@@ -2,6 +2,7 @@
 
 ### Added
 
+- `have_stimulus_controller`, `have_stimulus_action`, `have_stimulus_target` request-spec matchers — assert Stimulus `data-*` attributes in response HTML, auto-included in `type: :request` and `type: :controller` example groups
 - `assert_broadcasted_turbo_stream_to` and `refute_broadcasted_turbo_stream_to` in `TurboRspec::Assertions` — Minitest broadcast parity with the RSpec `have_broadcasted_turbo_stream_to` matcher
 - `have_turbo_frame` (Capybara) `.eager` chain — asserts `loading="eager"` on the frame (Turbo 8)
 - `have_turbo_frame` (Capybara) `.strict` chain — asserts the `[strict]` boolean attribute on the frame (Turbo 8)

@@ -8,7 +8,7 @@
 
 Drop-in test matchers for [hotwired/turbo-rails](https://github.com/hotwired/turbo-rails) — replace every hand-rolled Turbo helper in your test suite with a single gem.
 
-- **Request/controller specs** — `have_turbo_stream`, `have_turbo_frame`, `have_turbo_streams`
+- **Request/controller specs** — `have_turbo_stream`, `have_turbo_frame`, `have_turbo_streams`, `have_stimulus_controller`, `have_stimulus_action`, `have_stimulus_target`
 - **Broadcast specs** — `have_broadcasted_turbo_stream_to` with count qualifiers
 - **System/feature specs** — Capybara matchers: `have_turbo_frame`, `have_turbo_stream_tag`, `within_turbo_frame`, `have_stimulus_controller`, `have_stimulus_action`, `have_stimulus_target`
 - **Minitest** — `assert_turbo_stream`, `refute_turbo_stream`, `assert_turbo_frame`, `refute_turbo_frame`, `assert_broadcasted_turbo_stream_to`, `refute_broadcasted_turbo_stream_to`
@@ -252,22 +252,22 @@ end
 
 ### Stimulus matchers
 
-Assert Stimulus controller, action, and target attributes on the page (Capybara).
+`have_stimulus_controller`, `have_stimulus_action`, and `have_stimulus_target` work in both **request specs** (parsing response HTML) and **system/feature specs** (Capybara).
 
 ```ruby
-# Controller — data-controller contains "hello"
+# Request specs — asserts Stimulus attributes in rendered HTML response
+expect(response).to have_stimulus_controller("hello")
+expect(response).to have_stimulus_action("click->hello#greet")
+expect(response).to have_stimulus_action("hello#greet")   # shorthand — matches any event
+expect(response).to have_stimulus_target("hello", "name")
+
+# System/feature specs — asserts on the live Capybara page
 expect(page).to have_stimulus_controller("hello")
-
-# Action — full descriptor
 expect(page).to have_stimulus_action("click->hello#greet")
-
-# Action — shorthand without event (matches any event prefix)
-expect(page).to have_stimulus_action("hello#greet")
-
-# Target — data-hello-target contains "name"
 expect(page).to have_stimulus_target("hello", "name")
 
 # Negation
+expect(response).not_to have_stimulus_controller("missing")
 expect(page).not_to have_stimulus_controller("missing")
 ```
 

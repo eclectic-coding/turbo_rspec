@@ -4,7 +4,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 ## 1.6 — Minitest & Turbo 8 extensions
 
-- **Stimulus request-spec matchers** — `have_stimulus_controller`, `have_stimulus_action`, and `have_stimulus_target` currently only work in Capybara system/feature specs. Teams writing request specs can't assert Stimulus attributes on rendered HTML responses without dropping to raw string matching.
 
 ---
 

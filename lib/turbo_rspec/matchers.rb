@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 require_relative "matchers/have_broadcasted_turbo_stream_to"
+require_relative "matchers/have_stimulus_action"
+require_relative "matchers/have_stimulus_controller"
+require_relative "matchers/have_stimulus_target"
 require_relative "matchers/have_turbo_frame"
 require_relative "matchers/have_turbo_stream"
 require_relative "matchers/have_turbo_streams"
@@ -46,6 +49,28 @@ module TurboRspec
     # @return [HaveTurboStreams]
     def have_turbo_streams(*matchers)
       HaveTurboStreams.new(matchers)
+    end
+
+    # Assert that a response body contains an element with the given Stimulus controller.
+    # @param controller_name [String]
+    # @return [HaveStimulusController]
+    def have_stimulus_controller(controller_name)
+      HaveStimulusController.new(controller_name)
+    end
+
+    # Assert that a response body contains an element with the given Stimulus action.
+    # @param action_descriptor [String]
+    # @return [HaveStimulusAction]
+    def have_stimulus_action(action_descriptor)
+      HaveStimulusAction.new(action_descriptor)
+    end
+
+    # Assert that a response body contains an element with the given Stimulus target.
+    # @param controller_name [String]
+    # @param target_name [String]
+    # @return [HaveStimulusTarget]
+    def have_stimulus_target(controller_name, target_name)
+      HaveStimulusTarget.new(controller_name, target_name)
     end
 
     # Assert that a response body matches a stored turbo stream snapshot.
