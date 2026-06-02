@@ -4,8 +4,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 ## 1.5 — Broadcast parity & DX
 
-- **`with_action` validation on `have_broadcasted_turbo_stream_to`** — `have_turbo_stream.with_action` raises `ArgumentError` for unknown actions; the broadcast matcher silently accepts anything. Closing this gap means a typo in a broadcast spec fails at the assertion call rather than producing a confusing "no matching broadcasts" message.
-- **`.children_only` and `.with_attributes` on `have_broadcasted_turbo_stream_to`** — Both chains exist on `have_turbo_stream`; morph broadcasts with `children-only` and custom attributes are real patterns that currently can't be asserted cleanly.
 - **Richer broadcast failure messages** — When a broadcast match fails, show what was actually broadcast to the stream (action, target, content preview), mirroring the closest-match diff already present in the request-spec matcher.
 - **Snapshot inline diff** — `match_turbo_stream_snapshot` currently dumps raw before/after strings on mismatch; a line-by-line diff makes it far easier to spot what changed.
 
