@@ -4,6 +4,7 @@ require_relative "matchers/have_broadcasted_turbo_stream_to"
 require_relative "matchers/have_turbo_frame"
 require_relative "matchers/have_turbo_stream"
 require_relative "matchers/have_turbo_streams"
+require_relative "matchers/match_turbo_stream_snapshot"
 
 module TurboRspec
   # RSpec matchers for Turbo Stream and Turbo Frame assertions.
@@ -45,6 +46,15 @@ module TurboRspec
     # @return [HaveTurboStreams]
     def have_turbo_streams(*matchers)
       HaveTurboStreams.new(matchers)
+    end
+
+    # Assert that a response body matches a stored turbo stream snapshot.
+    # Creates the snapshot on the first run; diffs against it on subsequent runs.
+    # Set +UPDATE_TURBO_SNAPSHOTS=1+ to overwrite an existing snapshot.
+    # @param name [String] snapshot name, used as the file path within +snapshot_dir+
+    # @return [MatchTurboStreamSnapshot]
+    def match_turbo_stream_snapshot(name)
+      MatchTurboStreamSnapshot.new(name)
     end
   end
 end

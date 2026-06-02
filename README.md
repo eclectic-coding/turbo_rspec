@@ -274,6 +274,46 @@ expect(page).to have_turbo_stream_tag("signed_stream_name")
 expect(page).not_to have_turbo_stream_tag
 ```
 
+### `match_turbo_stream_snapshot`
+
+Record a turbo stream response on the first run and diff against it on subsequent runs. Good for complex multi-stream responses where specifying every constraint inline is noisy.
+
+```ruby
+# First run — writes spec/snapshots/turbo/messages/new.turbo
+expect(response).to match_turbo_stream_snapshot("messages/new")
+
+# Subsequent runs — diffs against stored snapshot
+expect(response).to match_turbo_stream_snapshot("messages/new")
+```
+
+Set `UPDATE_TURBO_SNAPSHOTS=1` to overwrite an existing snapshot. Configure the storage directory:
+
+```ruby
+# spec/support/turbo_rspec.rb
+TurboRspec.configure do |config|
+  config.snapshot_dir = "spec/fixtures/turbo_snapshots"
+end
+```
+
+### RuboCop cop
+
+Load the `TurboRspec/UseHaveTurboStream` cop to catch raw `response.body` assertions:
+
+```yaml
+# .rubocop.yml
+require:
+  - turbo_rspec/rubocop
+```
+
+```ruby
+# Flagged
+expect(response.body).to include("<turbo-stream")
+expect(response.body).to match(/turbo-stream/)
+
+# Preferred
+expect(response).to have_turbo_stream.with_action(:append)
+```
+
 ## Test helpers
 
 `TurboRspec::Helpers` provides factory methods for building Turbo HTML inline in tests. Auto-included in `type: :request` and `type: :controller` example groups.
