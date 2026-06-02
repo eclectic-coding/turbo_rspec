@@ -2,6 +2,7 @@
 
 ### Added
 
+- `have_broadcasted_turbo_stream_to` failure message now lists all streams broadcast to the channel and shows a closest-match diff with per-constraint ✓/✗ indicators — mirrors the behaviour already present in `have_turbo_stream`
 - `have_broadcasted_turbo_stream_to` now validates action names via `TurboRspec.known_actions`, raising `ArgumentError` for unrecognised actions — consistent with `have_turbo_stream`
 - `have_broadcasted_turbo_stream_to.with_attributes(hash)` — assert arbitrary HTML attributes on broadcast stream elements
 - `have_broadcasted_turbo_stream_to.children_only` — assert the `[children-only]` attribute on morph broadcasts
