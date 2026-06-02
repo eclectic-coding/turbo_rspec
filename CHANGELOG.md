@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+### Added
+
+- `have_stimulus_controller(name)` — Capybara matcher asserting `data-controller` contains the given controller name
+- `have_stimulus_action(descriptor)` — Capybara matcher asserting `data-action` contains the descriptor; accepts a full descriptor (`click->hello#greet`) or shorthand without event (`hello#greet`)
+- `have_stimulus_target(controller, target)` — Capybara matcher asserting `data-{controller}-target` contains the target name
+
 ## [1.2.0] - 2026-06-01
 
 ### Added

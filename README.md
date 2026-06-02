@@ -10,7 +10,7 @@ Drop-in test matchers for [hotwired/turbo-rails](https://github.com/hotwired/tur
 
 - **Request/controller specs** — `have_turbo_stream`, `have_turbo_frame`, `have_turbo_streams`
 - **Broadcast specs** — `have_broadcasted_turbo_stream_to` with count qualifiers
-- **System/feature specs** — Capybara matchers: `have_turbo_frame`, `have_turbo_stream_tag`, `within_turbo_frame`
+- **System/feature specs** — Capybara matchers: `have_turbo_frame`, `have_turbo_stream_tag`, `within_turbo_frame`, `have_stimulus_controller`, `have_stimulus_action`, `have_stimulus_target`
 - **Minitest** — `assert_turbo_stream`, `refute_turbo_stream`, `assert_turbo_frame`, `refute_turbo_frame`
 - **Factory helpers** — `turbo_stream_html`, `turbo_frame_html`
 - **Shared examples** — `it_behaves_like "a turbo stream response"`
@@ -235,6 +235,29 @@ within_turbo_frame("messages") do
   click_button "Reply"
 end
 ```
+
+### Stimulus matchers
+
+Assert Stimulus controller, action, and target attributes on the page (Capybara).
+
+```ruby
+# Controller — data-controller contains "hello"
+expect(page).to have_stimulus_controller("hello")
+
+# Action — full descriptor
+expect(page).to have_stimulus_action("click->hello#greet")
+
+# Action — shorthand without event (matches any event prefix)
+expect(page).to have_stimulus_action("hello#greet")
+
+# Target — data-hello-target contains "name"
+expect(page).to have_stimulus_target("hello", "name")
+
+# Negation
+expect(page).not_to have_stimulus_controller("missing")
+```
+
+All three matchers use space-separated token matching (`~=`), so they work correctly when multiple controllers, actions, or targets are declared on a single element.
 
 ### `have_turbo_stream_tag`
 

@@ -127,6 +127,9 @@ module TurboRspec
     module Matchers
       def have_turbo_frame: (String id) -> HaveTurboFrame
       def have_turbo_stream_tag: (?String? signed_stream_name) -> HaveTurboStreamTag
+      def have_stimulus_controller: (String controller_name) -> HaveStimulusController
+      def have_stimulus_action: (String action_descriptor) -> HaveStimulusAction
+      def have_stimulus_target: (String controller_name, String target_name) -> HaveStimulusTarget
       def within_turbo_frame: (String id) { () -> void } -> void
 
       class HaveTurboFrame
@@ -139,6 +142,33 @@ module TurboRspec
         def lazy: () -> self
 
         # Capybara matcher interface
+        def matches?: (untyped page_or_node) -> bool
+        def does_not_match?: (untyped page_or_node) -> bool
+        def failure_message: () -> String
+        def failure_message_when_negated: () -> String
+        def description: () -> String
+      end
+
+      class HaveStimulusController
+        def initialize: (String controller_name) -> void
+        def matches?: (untyped page_or_node) -> bool
+        def does_not_match?: (untyped page_or_node) -> bool
+        def failure_message: () -> String
+        def failure_message_when_negated: () -> String
+        def description: () -> String
+      end
+
+      class HaveStimulusAction
+        def initialize: (String action_descriptor) -> void
+        def matches?: (untyped page_or_node) -> bool
+        def does_not_match?: (untyped page_or_node) -> bool
+        def failure_message: () -> String
+        def failure_message_when_negated: () -> String
+        def description: () -> String
+      end
+
+      class HaveStimulusTarget
+        def initialize: (String controller_name, String target_name) -> void
         def matches?: (untyped page_or_node) -> bool
         def does_not_match?: (untyped page_or_node) -> bool
         def failure_message: () -> String
