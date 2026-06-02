@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.5.0] - 2026-06-02
+
 ### Added
 
 - `match_turbo_stream_snapshot` failure message now shows a line-by-line inline diff (stored → actual) instead of raw before/after strings
