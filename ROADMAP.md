@@ -4,7 +4,6 @@ RSpec matchers for [Turbo](https://github.com/hotwired/turbo-rails): Turbo Strea
 
 ## 1.5 — Broadcast parity & DX
 
-- **Richer broadcast failure messages** — When a broadcast match fails, show what was actually broadcast to the stream (action, target, content preview), mirroring the closest-match diff already present in the request-spec matcher.
 - **Snapshot inline diff** — `match_turbo_stream_snapshot` currently dumps raw before/after strings on mismatch; a line-by-line diff makes it far easier to spot what changed.
 
 ## 1.6 — Minitest & Turbo 8 extensions
