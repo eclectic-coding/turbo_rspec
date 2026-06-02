@@ -204,7 +204,25 @@ RSpec.describe TurboRspec::Matchers::HaveBroadcastedTurboStreamTo do
       matcher.matches?(-> {})
       expect(matcher.failure_message).to include(stream)
       expect(matcher.failure_message).to include("replace")
-      expect(matcher.failure_message).to include("no matching broadcasts")
+      expect(matcher.failure_message).to include("no broadcasts were made")
+    end
+
+    it "lists found streams when broadcasts exist but none match" do
+      matcher.matches?(-> { broadcast(stream, turbo_stream_html(action: "append", target: "list")) })
+      expect(matcher.failure_message).to include("1 stream(s) broadcast")
+      expect(matcher.failure_message).to include('action="append"')
+    end
+
+    it "shows closest match with constraint diff when broadcasts exist" do
+      matcher.matches?(-> { broadcast(stream, turbo_stream_html(action: "append", target: "list")) })
+      expect(matcher.failure_message).to include("closest match")
+      expect(matcher.failure_message).to include("✗ action")
+    end
+
+    it "shows no closest match section when no constraints set" do
+      m = have_broadcasted_turbo_stream_to(stream)
+      m.matches?(-> {})
+      expect(m.failure_message).not_to include("closest match")
     end
 
     it "provides negated failure message" do
@@ -235,6 +253,84 @@ RSpec.describe TurboRspec::Matchers::HaveBroadcastedTurboStreamTo do
   end
 
   describe "failure messages" do
+    describe "constraint_diff branches" do
+      def broadcast_html(action: "append", target: "list", content: nil, targets: nil, **extra)
+        attrs = extra.map { |k, v| " #{k}=\"#{v}\"" }.join
+        inner = content ? "<template>#{content}</template>" : "<template></template>"
+        if targets
+          "<turbo-stream action=\"#{action}\" targets=\"#{targets}\"#{attrs}>#{inner}</turbo-stream>"
+        else
+          "<turbo-stream action=\"#{action}\" target=\"#{target}\"#{attrs}>#{inner}</turbo-stream>"
+        end
+      end
+
+      it "shows ✓ action and ✗ target when action matches but target fails" do
+        m = have_broadcasted_turbo_stream_to(stream).with_action(:append).targeting("other")
+        m.matches?(-> { broadcast(stream, broadcast_html(action: "append", target: "list")) })
+        expect(m.failure_message).to include("✓ action").and include("✗ target")
+      end
+
+      it "shows ✓ target and ✗ action when target matches but action fails" do
+        m = have_broadcasted_turbo_stream_to(stream).with_action(:replace).targeting("list")
+        m.matches?(-> { broadcast(stream, broadcast_html(action: "append", target: "list")) })
+        expect(m.failure_message).to include("✗ action").and include("✓ target")
+      end
+
+      it "shows ✓ targets when targeting_all matches but action fails" do
+        html = broadcast_html(action: "append", targets: ".items")
+        m = have_broadcasted_turbo_stream_to(stream).with_action(:replace).targeting_all(".items")
+        m.matches?(-> { broadcast(stream, html) })
+        expect(m.failure_message).to include("✗ action").and include("✓ targets")
+      end
+
+      it "shows ✗ targets when targeting_all does not match" do
+        html = broadcast_html(action: "append", targets: ".other")
+        m = have_broadcasted_turbo_stream_to(stream).with_action(:append).targeting_all(".items")
+        m.matches?(-> { broadcast(stream, html) })
+        expect(m.failure_message).to include("✓ action").and include("✗ targets")
+      end
+
+      it "shows ✓ content when content matches but action fails" do
+        m = have_broadcasted_turbo_stream_to(stream).with_action(:replace).with_content("Hello")
+        m.matches?(-> { broadcast(stream, broadcast_html(action: "append", content: "Hello")) })
+        expect(m.failure_message).to include("✓ content")
+      end
+
+      it "shows ✗ content when content does not match" do
+        m = have_broadcasted_turbo_stream_to(stream).with_action(:append).with_content("Bye")
+        m.matches?(-> { broadcast(stream, broadcast_html(action: "append", content: "Hello")) })
+        expect(m.failure_message).to include("✓ action").and include("✗ content")
+      end
+
+      it "shows ✓ rendering when partial matches but action fails" do
+        html = '<turbo-stream action="append" target="list"><template><!-- _item.html.erb --></template></turbo-stream>'
+        m = have_broadcasted_turbo_stream_to(stream).with_action(:replace).rendering("_item.html.erb")
+        m.matches?(-> { broadcast(stream, html) })
+        expect(m.failure_message).to include("✓ rendering")
+      end
+
+      it "shows ✗ rendering when partial does not match" do
+        html = '<turbo-stream action="append" target="list"><template><!-- _other.html.erb --></template></turbo-stream>'
+        m = have_broadcasted_turbo_stream_to(stream).with_action(:append).rendering("_item.html.erb")
+        m.matches?(-> { broadcast(stream, html) })
+        expect(m.failure_message).to include("✓ action").and include("✗ rendering")
+      end
+
+      it "shows ✓ attr when attribute matches but action fails" do
+        html = broadcast_html(action: "append", "data-foo": "bar")
+        m = have_broadcasted_turbo_stream_to(stream).with_action(:replace).with_attributes("data-foo" => "bar")
+        m.matches?(-> { broadcast(stream, html) })
+        expect(m.failure_message).to include("✓ attr[data-foo]")
+      end
+
+      it "shows ✓ children-only when attribute present but action fails" do
+        html = '<turbo-stream action="morph" target="body" children-only><template></template></turbo-stream>'
+        m = have_broadcasted_turbo_stream_to(stream).with_action(:replace).children_only
+        m.matches?(-> { broadcast(stream, html) })
+        expect(m.failure_message).to include("✓ children-only")
+      end
+    end
+
     describe "constraint_description branches" do
       it "includes targeting in failure message" do
         m = have_broadcasted_turbo_stream_to(stream).targeting("list")
@@ -286,6 +382,46 @@ RSpec.describe TurboRspec::Matchers::HaveBroadcastedTurboStreamTo do
         m = have_broadcasted_turbo_stream_to(stream).exactly(3).times
         m.matches?(-> { broadcast(stream, turbo_stream_html) })
         expect(m.failure_message).to include("found 1 matching broadcast(s)")
+      end
+
+      it "shows no-broadcasts message when stream is empty" do
+        m = have_broadcasted_turbo_stream_to(stream).with_action(:append)
+        m.matches?(-> {})
+        expect(m.failure_message).to include("no broadcasts were made")
+      end
+
+      it "shows stream list when broadcasts exist but none match" do
+        m = have_broadcasted_turbo_stream_to(stream).with_action(:replace)
+        m.matches?(-> { broadcast(stream, turbo_stream_html(action: "append")) })
+        expect(m.failure_message).to include("1 stream(s) broadcast")
+        expect(m.failure_message).to include("closest match")
+      end
+
+      it "shows ✗ attr in constraint diff when attribute does not match" do
+        html = '<turbo-stream action="append" target="list"><template></template></turbo-stream>'
+        m = have_broadcasted_turbo_stream_to(stream).with_attributes("data-foo" => "bar")
+        m.matches?(-> { broadcast(stream, html) })
+        expect(m.failure_message).to include("✗ attr[data-foo]")
+      end
+
+      it "shows ✗ children-only in constraint diff when attribute is absent" do
+        m = have_broadcasted_turbo_stream_to(stream).with_action(:morph).children_only
+        m.matches?(-> { broadcast(stream, turbo_stream_html(action: "morph")) })
+        expect(m.failure_message).to include("✗ children-only")
+      end
+
+      it "shows stream list without closest match when no constraints" do
+        m = have_broadcasted_turbo_stream_to(stream)
+        m.matches?(-> { broadcast("other", turbo_stream_html) })
+        expect(m.failure_message).to include("no broadcasts were made")
+      end
+
+      it "skips non-JSON payloads in stream list" do
+        allow(ActionCable.server.pubsub).to receive(:broadcasts)
+          .and_return([], ["not-json{"])
+        m = have_broadcasted_turbo_stream_to(stream).with_action(:append)
+        m.matches?(-> {})
+        expect(m.failure_message).to include("no broadcasts were made")
       end
     end
   end

@@ -99,7 +99,9 @@ module TurboRspec
       def matches?(block)
         before = snapshot
         block.call
-        @matching = (snapshot - before).select { |msg| message_matches?(msg) }
+        @new_broadcasts = snapshot - before
+        @all_streams = parse_all_streams(@new_broadcasts)
+        @matching = @new_broadcasts.select { |msg| message_matches?(msg) }
         count_matches?(@matching.size)
       end
 
@@ -223,11 +225,75 @@ module TurboRspec
       end
 
       def found_message
-        if @matching.empty?
-          "but no matching broadcasts were found"
-        else
+        if @matching.size > 0
           "found #{@matching.size} matching broadcast(s)"
+        elsif @all_streams.empty?
+          "but no broadcasts were made to #{stream_name.inspect}"
+        else
+          no_match_message
         end
+      end
+
+      def no_match_message
+        lines = ["found #{@all_streams.size} stream(s) broadcast to #{stream_name.inspect}:"]
+        @all_streams.each_with_index do |s, i|
+          content_preview = s.text.strip.slice(0, 50)
+          content_preview = content_preview.empty? ? "(empty)" : content_preview.inspect
+          lines << "  #{i + 1}. action=#{s["action"].inspect} target=#{s["target"].inspect} content=#{content_preview}"
+        end
+
+        # :nocov:
+        if constraint_count > 0
+          # :nocov:
+          closest = @all_streams.max_by { |s| count_matching_constraints(s) }
+          lines << ""
+          lines << "closest match (#{count_matching_constraints(closest)}/#{constraint_count} constraint(s) matched):"
+          lines.concat(constraint_diff(closest))
+        end
+
+        lines.join("\n")
+      end
+
+      def parse_all_streams(broadcasts)
+        broadcasts.flat_map do |msg|
+          html = JSON.parse(msg)
+          Nokogiri::HTML5.fragment(html).css("turbo-stream").to_a
+        rescue JSON::ParserError
+          []
+        end
+      end
+
+      def count_matching_constraints(stream)
+        count = 0
+        count += 1 if !@action.nil? && matches_action?(stream)
+        count += 1 if !@target.nil? && matches_target?(stream)
+        count += 1 if !@target_all.nil? && matches_target_all?(stream)
+        count += 1 if !@content.nil? && matches_content?(stream)
+        count += 1 if !@partial.nil? && matches_partial?(stream)
+        count += 1 if @attributes.any? && matches_attributes?(stream)
+        count += 1 if @children_only && matches_children_only?(stream)
+        count
+      end
+
+      def constraint_count
+        [@action, @target, @target_all, @content, @partial].count { |c| !c.nil? } +
+          (@attributes.any? ? 1 : 0) +
+          (@children_only ? 1 : 0)
+      end
+
+      def constraint_diff(stream)
+        lines = []
+        lines << "  #{matches_action?(stream) ? "✓" : "✗"} action:   expected #{@action.inspect}, got #{stream["action"].inspect}" if @action
+        lines << "  #{matches_target?(stream) ? "✓" : "✗"} target:   expected #{@target.inspect}, got #{stream["target"].inspect}" if @target
+        lines << "  #{matches_target_all?(stream) ? "✓" : "✗"} targets:  expected #{@target_all.inspect}, got #{stream["targets"].inspect}" if @target_all
+        lines << "  #{matches_content?(stream) ? "✓" : "✗"} content:  expected to include #{@content.inspect}, got #{stream.text.strip.slice(0, 50).inspect}" if @content
+        lines << "  #{matches_partial?(stream) ? "✓" : "✗"} rendering: expected to include #{@partial.inspect}" if @partial
+        @attributes.each do |k, v|
+          actual = stream[k]
+          lines << "  #{(actual == v) ? "✓" : "✗"} attr[#{k}]: expected #{v.inspect}, got #{actual.inspect}"
+        end
+        lines << "  #{matches_children_only?(stream) ? "✓" : "✗"} children-only: expected attribute to be present" if @children_only
+        lines
       end
     end
   end
