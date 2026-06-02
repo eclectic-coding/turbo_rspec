@@ -121,6 +121,75 @@ RSpec.describe TurboRspec::Matchers::HaveBroadcastedTurboStreamTo do
     end
   end
 
+  describe "with_attributes" do
+    it "matches when all specified attributes are present" do
+      html = '<turbo-stream action="append" target="list" data-foo="bar"><template></template></turbo-stream>'
+      expect { broadcast(stream, html) }
+        .to have_broadcasted_turbo_stream_to(stream).with_attributes("data-foo" => "bar")
+    end
+
+    it "does not match when an attribute value differs" do
+      html = '<turbo-stream action="append" target="list" data-foo="bar"><template></template></turbo-stream>'
+      expect { broadcast(stream, html) }
+        .not_to have_broadcasted_turbo_stream_to(stream).with_attributes("data-foo" => "other")
+    end
+
+    it "chains with other constraints" do
+      html = '<turbo-stream action="append" target="list" data-foo="bar"><template></template></turbo-stream>'
+      expect { broadcast(stream, html) }
+        .to have_broadcasted_turbo_stream_to(stream).with_action(:append).with_attributes("data-foo" => "bar")
+    end
+
+    it "includes attributes in constraint description" do
+      expect(have_broadcasted_turbo_stream_to(stream).with_attributes("data-foo" => "bar").description)
+        .to include("data-foo")
+    end
+  end
+
+  describe "children_only" do
+    let(:morph_html) { '<turbo-stream action="morph" target="body" children-only><template><p>Hi</p></template></turbo-stream>' }
+    let(:plain_morph) { '<turbo-stream action="morph" target="body"><template><p>Hi</p></template></turbo-stream>' }
+
+    it "matches a morph broadcast with children-only attribute" do
+      expect { broadcast(stream, morph_html) }
+        .to have_broadcasted_turbo_stream_to(stream).with_action(:morph).children_only
+    end
+
+    it "does not match when children-only attribute is absent" do
+      expect { broadcast(stream, plain_morph) }
+        .not_to have_broadcasted_turbo_stream_to(stream).with_action(:morph).children_only
+    end
+
+    it "includes children only in constraint description" do
+      expect(have_broadcasted_turbo_stream_to(stream).children_only.description).to include("children only")
+    end
+  end
+
+  describe "with_action validation" do
+    after { TurboRspec.reset_configuration! }
+
+    it "raises ArgumentError for unknown actions" do
+      expect { have_broadcasted_turbo_stream_to(stream).with_action(:foobar) }
+        .to raise_error(ArgumentError, /Unknown Turbo stream action "foobar"/)
+    end
+
+    it "includes registration hint in the error" do
+      expect { have_broadcasted_turbo_stream_to(stream).with_action(:foobar) }
+        .to raise_error(ArgumentError, /register_action/)
+    end
+
+    it "accepts all built-in actions without error" do
+      TurboRspec::BUILTIN_ACTIONS.each do |action|
+        expect { have_broadcasted_turbo_stream_to(stream).with_action(action) }.not_to raise_error
+      end
+    end
+
+    it "accepts registered custom actions" do
+      TurboRspec.register_action(:sparkle)
+      expect { have_broadcasted_turbo_stream_to(stream).with_action(:sparkle) }.not_to raise_error
+    end
+  end
+
   describe "broadcast_turbo_stream_to alias" do
     it "is available" do
       expect { broadcast(stream, turbo_stream_html) }

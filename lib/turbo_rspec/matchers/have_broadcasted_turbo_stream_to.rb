@@ -12,6 +12,8 @@ module TurboRspec
         @target_all = nil
         @content = nil
         @partial = nil
+        @attributes = {}
+        @children_only = false
         @expected_count = nil
         @count_type = :at_least
       end
@@ -19,7 +21,12 @@ module TurboRspec
       # Stream constraints (mirrors HaveTurboStream)
 
       def with_action(action)
-        @action = action.to_s
+        action_str = action.to_s
+        unless TurboRspec.known_actions.include?(action_str)
+          raise ArgumentError, "Unknown Turbo stream action #{action_str.inspect}. " \
+            "Register custom actions with TurboRspec.register_action(:#{action_str})."
+        end
+        @action = action_str
         self
       end
 
@@ -40,6 +47,16 @@ module TurboRspec
 
       def rendering(partial)
         @partial = partial.to_s
+        self
+      end
+
+      def with_attributes(attrs)
+        @attributes = attrs.transform_keys(&:to_s).transform_values(&:to_s)
+        self
+      end
+
+      def children_only
+        @children_only = true
         self
       end
 
@@ -131,7 +148,9 @@ module TurboRspec
           matches_target?(stream) &&
           matches_target_all?(stream) &&
           matches_content?(stream) &&
-          matches_partial?(stream)
+          matches_partial?(stream) &&
+          matches_attributes?(stream) &&
+          matches_children_only?(stream)
       end
 
       def matches_action?(stream)
@@ -156,6 +175,16 @@ module TurboRspec
         stream.to_html.include?(@partial)
       end
 
+      def matches_attributes?(stream)
+        return true if @attributes.empty?
+        @attributes.all? { |k, v| stream[k] == v }
+      end
+
+      def matches_children_only?(stream)
+        return true unless @children_only
+        !stream["children-only"].nil?
+      end
+
       def count_matches?(n)
         if @expected_count.nil?
           n >= 1
@@ -177,6 +206,8 @@ module TurboRspec
         parts << " targeting all #{@target_all.inspect}" if @target_all
         parts << " with content #{@content.inspect}" if @content
         parts << " rendering #{@partial.inspect}" if @partial
+        parts << " with attributes #{@attributes.inspect}" if @attributes.any?
+        parts << " children only" if @children_only
         parts.join
       end
 
