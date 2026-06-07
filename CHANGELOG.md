@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Fixed
+
+- `shared_examples.rb` now guards on `RSpec.respond_to?(:shared_examples)` in addition to `defined?(RSpec)`, preventing errors when the `rspec` meta-gem is required but `rspec-core` is not yet fully initialized (e.g. during `rails assets:precompile` in the test environment)
+
 ## [1.6.0] - 2026-06-02
 
 ### Added
