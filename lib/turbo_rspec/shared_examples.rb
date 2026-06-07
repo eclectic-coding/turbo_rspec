@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # :nocov:
-if defined?(RSpec)
+if defined?(RSpec) && RSpec.respond_to?(:shared_examples)
   # :nocov:
   RSpec.shared_examples "a turbo stream response" do |action: nil, target: nil, targets: nil, content: nil, partial: nil|
     it "responds with a turbo stream" do
