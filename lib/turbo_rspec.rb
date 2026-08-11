@@ -87,7 +87,7 @@ module TurboRspec
 end
 
 # :nocov:
-if defined?(RSpec)
+if defined?(RSpec) && RSpec.respond_to?(:configure)
   RSpec.configure { |config| TurboRspec.install_rspec_integration(config) }
 end
 # :nocov:
