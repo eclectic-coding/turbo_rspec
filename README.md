@@ -24,9 +24,18 @@ Add to your application's `Gemfile`:
 
 ```ruby
 group :test do
-  gem "turbo_rspec"
+  gem "turbo_rspec", require: false
 end
 ```
+
+Then require it explicitly in `spec/rails_helper.rb` (or `spec/spec_helper.rb`), after RSpec is loaded:
+
+```ruby
+require "rspec/rails"
+require "turbo_rspec"
+```
+
+`require: false` avoids Bundler auto-requiring the gem during app boot, before RSpec itself is loaded — the same convention used by `shoulda-matchers`, `database_cleaner`, and other RSpec extension gems.
 
 ## Setup
 

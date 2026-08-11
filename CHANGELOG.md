@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+### Fixed
+
+- `lib/turbo_rspec.rb` now guards the eager `RSpec.configure` call on `RSpec.respond_to?(:configure)` in addition to `defined?(RSpec)`, preventing the same class of boot-time error already fixed for `shared_examples.rb` in 1.6.1 — this occurs when the `rspec` meta-gem is required but `rspec-core` is not yet fully initialized
+
+### Changed
+
+- README install snippet now recommends `gem "turbo_rspec", require: false` with an explicit `require "turbo_rspec"` in `rails_helper.rb`/`spec_helper.rb`, matching the convention used by `shoulda-matchers`, `database_cleaner`, and other RSpec extension gems — decouples the gem from Bundler's app-boot-time require order
+
 ## [1.6.1] - 2026-06-07
 
 ### Fixed
