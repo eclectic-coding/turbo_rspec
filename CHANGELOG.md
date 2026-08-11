@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.6.2] - 2026-08-11
+
 ### Fixed
 
 - `lib/turbo_rspec.rb` now guards the eager `RSpec.configure` call on `RSpec.respond_to?(:configure)` in addition to `defined?(RSpec)`, preventing the same class of boot-time error already fixed for `shared_examples.rb` in 1.6.1 — this occurs when the `rspec` meta-gem is required but `rspec-core` is not yet fully initialized
