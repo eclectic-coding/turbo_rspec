@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Pre-push hook: checks that docs are updated before pushing a feature branch.
+# Pre-push hook: checks that docs are updated, then runs the full rake suite.
 # Install: bin/setup (symlinks this file to .git/hooks/pre-push)
 set -euo pipefail
 
@@ -56,3 +56,6 @@ if [[ "$FAIL" -eq 1 ]]; then
   echo "To skip this check: git push --no-verify" >&2
   exit 1
 fi
+
+echo "==> Running bundle exec rake (audit, specs, lint)..." >&2
+bundle exec rake
