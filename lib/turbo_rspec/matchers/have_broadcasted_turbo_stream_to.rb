@@ -191,9 +191,9 @@ module TurboRspec
         if @expected_count.nil?
           n >= 1
         else
-          # :nocov:
+          # simplecov:disable
           case @count_type
-          # :nocov:
+          # simplecov:enable
           when :exactly then n == @expected_count
           when :at_least then n >= @expected_count
           when :at_most then n <= @expected_count
@@ -215,9 +215,9 @@ module TurboRspec
 
       def count_description
         return "" if @expected_count.nil? && @count_type == :at_least
-        # :nocov:
+        # simplecov:disable
         case @count_type
-        # :nocov:
+        # simplecov:enable
         when :exactly then " exactly #{@expected_count} time(s)"
         when :at_least then " at least #{@expected_count} time(s)"
         when :at_most then " at most #{@expected_count} time(s)"
@@ -242,9 +242,9 @@ module TurboRspec
           lines << "  #{i + 1}. action=#{s["action"].inspect} target=#{s["target"].inspect} content=#{content_preview}"
         end
 
-        # :nocov:
+        # simplecov:disable
         if constraint_count > 0
-          # :nocov:
+          # simplecov:enable
           closest = @all_streams.max_by { |s| count_matching_constraints(s) }
           lines << ""
           lines << "closest match (#{count_matching_constraints(closest)}/#{constraint_count} constraint(s) matched):"

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# :nocov:
+# simplecov:disable
 if defined?(RSpec) && RSpec.respond_to?(:shared_examples)
-  # :nocov:
+  # simplecov:enable
   RSpec.shared_examples "a turbo stream response" do |action: nil, target: nil, targets: nil, content: nil, partial: nil|
     it "responds with a turbo stream" do
       matcher = have_turbo_stream

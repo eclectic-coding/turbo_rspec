@@ -29,11 +29,11 @@ module TurboRspec
         HaveStimulusTarget.new(controller_name, target_name)
       end
 
-      # :nocov:
+      # simplecov:disable
       def within_turbo_frame(id, &block)
         page.within("turbo-frame##{id}", &block)
       end
-      # :nocov:
+      # simplecov:enable
     end
   end
 end

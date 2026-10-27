@@ -7,7 +7,7 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::JSONFormatter
 ])
 SimpleCov.start do
-  add_filter "/spec/"
+  skip "/spec/"
   enable_coverage :branch
   minimum_coverage line: 100, branch: 100
 end

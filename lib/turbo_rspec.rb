@@ -86,8 +86,8 @@ module TurboRspec
   end
 end
 
-# :nocov:
+# simplecov:disable
 if defined?(RSpec) && RSpec.respond_to?(:configure)
   RSpec.configure { |config| TurboRspec.install_rspec_integration(config) }
 end
-# :nocov:
+# simplecov:enable
