@@ -50,6 +50,7 @@ CHANGELOG entries are **user-facing only** — document changes to the public AP
 
 - **Blocks** the push if `lib/` files changed but `CHANGELOG.md` has no new entry under `## [Unreleased]`.
 - **Warns** (advisory, doesn't block) if `README.md` or `ROADMAP.md` look untouched.
+- **Runs** `bundle exec rake` (advisory DB update, bundler-audit, specs, StandardRB) and blocks the push on any failure.
 
 To bypass when the push genuinely doesn't need a CHANGELOG entry (tooling-only changes):
 
