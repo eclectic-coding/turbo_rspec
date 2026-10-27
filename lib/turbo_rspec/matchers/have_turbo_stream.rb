@@ -236,9 +236,9 @@ module TurboRspec
         if @expected_count.nil?
           n >= 1
         else
-          # :nocov:
+          # simplecov:disable
           case @count_type
-          # :nocov:
+          # simplecov:enable
           when :exactly then n == @expected_count
           when :at_least then n >= @expected_count
           when :at_most then n <= @expected_count
@@ -260,9 +260,9 @@ module TurboRspec
 
       def count_description
         return "" if @expected_count.nil?
-        # :nocov:
+        # simplecov:disable
         case @count_type
-        # :nocov:
+        # simplecov:enable
         when :exactly then " exactly #{@expected_count} time(s)"
         when :at_least then " at least #{@expected_count} time(s)"
         when :at_most then " at most #{@expected_count} time(s)"
