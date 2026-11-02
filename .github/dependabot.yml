@@ -4,6 +4,11 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    # Gemfile.lock is committed, so also track transitive gems (rack, nokogiri,
+    # etc.); otherwise advisories in them only surface when the scheduled
+    # bundler-audit run fails.
+    allow:
+      - dependency-type: all
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
