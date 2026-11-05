@@ -7,15 +7,15 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    actioncable (8.1.4)
-      actionpack (= 8.1.4)
-      activesupport (= 8.1.4)
+    actioncable (8.1.4.1)
+      actionpack (= 8.1.4.1)
+      activesupport (= 8.1.4.1)
       nio4r (~> 2.0)
       websocket-driver (>= 0.6.1)
       zeitwerk (~> 2.6)
-    actionpack (8.1.4)
-      actionview (= 8.1.4)
-      activesupport (= 8.1.4)
+    actionpack (8.1.4.1)
+      actionview (= 8.1.4.1)
+      activesupport (= 8.1.4.1)
       nokogiri (>= 1.8.5)
       rack (>= 2.2.4)
       rack-session (>= 1.0.1)
@@ -23,13 +23,13 @@ GEM
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
       useragent (~> 0.16)
-    actionview (8.1.4)
-      activesupport (= 8.1.4)
+    actionview (8.1.4.1)
+      activesupport (= 8.1.4.1)
       builder (~> 3.1)
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
-      rails-html-sanitizer (~> 1.6)
-    activesupport (8.1.4)
+      rails-html-sanitizer (~> 1.6, >= 1.7.2)
+    activesupport (8.1.4.1)
       base64
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.3.1)
@@ -216,10 +216,10 @@ DEPENDENCIES
   yard (~> 0.9)
 
 CHECKSUMS
-  actioncable (8.1.4) sha256=cfcd72f8c861e01ccdc96d772ad8c5ad6ed0ea7c571aef81a794b6027eaa7f11
-  actionpack (8.1.4) sha256=245493cc51be195a7645e6fc184880fa7e5b32ff1a08e053ee31f58c76e30ea4
-  actionview (8.1.4) sha256=eff1efd07c4d969abad288322b423bcb67fdbab5e324c91ca37352b80f226076
-  activesupport (8.1.4) sha256=891dd3fe43c4fc8391934b237b1189bb1f661c932a84a840043db9d46a4e80df
+  actioncable (8.1.4.1) sha256=007670f7297973e94809e9f32a56624a7aa60b6e9d6696cd078064ce86d1c7fc
+  actionpack (8.1.4.1) sha256=8c6f2e7cbd2653ef0539bde1ff20eb3e2e264e366affe56f0ba7f06d3670cb4b
+  actionview (8.1.4.1) sha256=d25b4d9cf8d0c0195ffcfe8b2cf3fcbe6fea54fd7c17f1a9cb8182881463f12b
+  activesupport (8.1.4.1) sha256=16ac4f341ca65c85a1fcdb8ac73f68891aae9e3c4a6f9c3a27daed8b00017ed7
   addressable (2.9.2) sha256=9117c7e7d6ee07230e75ce41fb9401ae55354dc654fcd0e862ba41d539e9a610
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
