@@ -11,6 +11,14 @@ updates:
     # bundler-audit run fails.
     allow:
       - dependency-type: all
+    # One PR per run for all minor/patch bumps (auto-merged once CI passes); majors stay separate PRs.
+    groups:
+      bundler-minor-patch:
+        patterns:
+        - "*"
+        update-types:
+        - minor
+        - patch
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
