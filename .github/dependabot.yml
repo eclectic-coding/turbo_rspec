@@ -3,7 +3,9 @@ updates:
   - package-ecosystem: bundler
     directory: "/"
     schedule:
-      interval: weekly
+      # Daily, to match the daily scheduled audit: a weekly cadence left new
+      # advisories failing the audit for days before a fix PR appeared.
+      interval: daily
     # Gemfile.lock is committed, so also track transitive gems (rack, nokogiri,
     # etc.); otherwise advisories in them only surface when the scheduled
     # bundler-audit run fails.
